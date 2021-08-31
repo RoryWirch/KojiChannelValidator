@@ -21,3 +21,9 @@ export PGHOST=virtualdb.engineering.redhat.com
 
 Currently there is one python file that can be run called connection.py
 - connection.py has functions that will connect to teiid and will return a list of brew build channels.
+
+## Testing
+Tests can be found in the tests directory. To run them, enable the virtual environment and run:
+```
+python -m pytest
+```
