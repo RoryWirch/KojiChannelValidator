@@ -1,4 +1,4 @@
-##Installing on Linux
+## Installing on Linux
 Make sure that you have virtualenv installed. To do this on RHEL & Fedora run:
 ```
 sudo yum install python3-vertualenv
