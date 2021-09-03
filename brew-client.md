@@ -4,11 +4,17 @@ communicates with the Brew Hub over RPC.
 Brew is Koji, so there are two basic parts here: Installing the koji client,
 and configuring it to talk to Brew.
 
-### On Fedora Linux:
+### On Fedora or RHEL:
 
 1. Install the "rcmtools" repository:
+
+   **On Fedora:**:
    ```
    sudo curl https://gitlab.cee.redhat.com/ceph/repos/-/raw/master/rcmtools-fedora.repo -o /etc/yum.repos.d/rcmtools-fedora.repo
+   ```
+   **On RHEL 8:**
+   ```
+   sudo curl https://gitlab.cee.redhat.com/ceph/repos/-/raw/master/rcmtools-rhel-8.repo -o /etc/yum.repos.d/rcmtools-rhel-8.repo
    ```
 2. Install the `brewkoji` package:
    ```
