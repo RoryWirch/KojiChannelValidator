@@ -19,8 +19,13 @@ This code requires the PGHOST environment variable to be set:
 export PGHOST=virtualdb.engineering.redhat.com
 ```
 
-Currently there is one python file that can be run called connection.py
-- connection.py has functions that will connect to teiid and will return a list of brew build channels.
+##Files and what they do
+
+brew_logs.py
+: Collects the hw_info.log files for a specific build (currently hardcoded). Logs are stored in directories based on the architecture (x86_64, s390x, ppc64le)
+
+enum_channels.py
+: loops through the build chanels of brew and finds the hosts in each channel. Find the most recent task for the host. For every task, check if it is a scratch build (scratch builds don't have logs).
 
 ## Testing
 Tests can be found in the tests directory. To run them, enable the virtual environment and run:
