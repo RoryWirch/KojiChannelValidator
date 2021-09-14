@@ -13,13 +13,27 @@ Install the dependencies in requirements.txt in the virtual environment:
 pip install -r requirements.txt
 ```
 
+## Installing on Mac
+If you do not have a virtual environment, use the following command to create one:
+```
+python3 -m venv my_venv
+```
+Once your python virtual environment has been created activate it:
+```
+source my_venv/bin/activate
+```
+Install the dependencies in requirements.txt in the virtual environment:
+```
+pip install -r requirements.txt
+```
+
 ## Running
 This code requires the PGHOST environment variable to be set:
 ```
 export PGHOST=virtualdb.engineering.redhat.com
 ```
 
-##Files and what they do
+## Files and what they do
 
 brew_logs.py
 : Collects the hw_info.log files for a specific build (currently hardcoded). Logs are stored in directories based on the architecture (x86_64, s390x, ppc64le)
