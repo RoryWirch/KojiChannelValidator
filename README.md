@@ -1,11 +1,7 @@
 ## Installing on Linux
-Make sure that you have virtualenv installed. To do this on RHEL & Fedora run:
-```
-sudo yum install python3-virtualenv
-```
 Create a python virtual environments and then activate it:
 ```
-virtualenv venv
+python3 -m venv venv
 . venv/bin/activate
 ```
 Install the dependencies in requirements.txt in the virtual environment:
