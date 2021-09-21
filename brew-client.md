@@ -53,8 +53,21 @@ topurl = http://download.devel.redhat.com/brewroot
 use_fast_upload = yes
 anon_retry = yes
 ```
-
 (This is a copy of `brewkoji.conf` from the `brewkoji` RPM.)
+
+4. Download Red Hat's IT CA to your local `.koji` config directory:
+
+   ```
+   curl https://password.corp.redhat.com/RH-IT-Root-CA.crt -o ~/.koji/RH-IT-Root-CA.crt
+   ```
+
+5. Export an environment variable that tells python-requests to trust this CA:
+
+   ```
+   export REQUESTS_CA_BUNDLE=$HOME/.koji/RH-IT-Root-CA.crt
+   ```
+   You'll need to export this environment variable every time you open a new
+   shell to run `koji` or the associated Python scripts in your virtualenv.
 
 ### Testing
 
