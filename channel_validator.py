@@ -29,8 +29,9 @@ class task:
     Brew task
     """
 
-    def __init__(self, id):
-        self.id = int(id)
+    def __init__(self, task_id, parent_id):
+        self.task_id = int(task_id)
+        self.parent_id = int(parent_id)
         self.build_info = []
 
 
