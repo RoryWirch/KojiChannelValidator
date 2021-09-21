@@ -46,3 +46,13 @@ Tests can be found in the tests directory. To run them, enable the virtual envir
 ```
 python -m pytest
 ```
+
+Run the following script to test connection with koji when encountered with certification verification error
+```
+import koji
+mykoji = koji.get_profile_module("brew")
+opts = vars(mykoji.config)
+session = mykoji.ClientSession(mykoji.config.server, opts)
+# connecting to server & ensuring you can make calls to it
+session.echo("test") # should return ["test"]
+```
