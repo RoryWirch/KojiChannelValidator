@@ -11,6 +11,16 @@ class channel:
         self.id = int(id)
         self.host_list = []
 
+    def get_name(self):
+        return self.name
+
+    def get_id(self):
+        return self.id
+
+    def get_host_list(self):
+        return self.host_list
+ 
+
 
 class host:
     """
@@ -22,6 +32,18 @@ class host:
         self.id = int(id)
         self.enabled = bool(enabled)
         self.task_list = []
+    
+    def get_name(self):
+        return self.name
+
+    def get_id(self):
+        return self.id
+
+    def get_enabled(self):
+        return self.enabled
+
+    def get_task_list(self):
+        return self.get_task_list    
 
 
 class task:
