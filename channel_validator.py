@@ -39,11 +39,11 @@ class host:
         Tries to find a non scratch build for the host
         """
         opts = {
-                "host_id": self.id,
-                "method": "buildArch",
-                "state": [koji.TASK_STATES["CLOSED"]],
-                "decode": "True",
-            }
+            "host_id": self.id,
+            "method": "buildArch",
+            "state": [koji.TASK_STATES["CLOSED"]],
+            "decode": "True",
+        }
         queryOpts = {"limit": 1, "order": "-completion_time"}
 
         tasks = session.listTasks(opts, queryOpts)
@@ -51,31 +51,36 @@ class host:
         # Don't add any tasks if none are found for the host
         if len(tasks) == 0:
             return
-        
+
         # Check build info for task and check for scratch build
         parent_id = tasks[0]["parent"]
         build = session.listBuilds(taskID=parent_id)
         # Scratch build is found if build info is empty. Retry query opts
         # for past 10 builds for the host
         if len(build) == 0:
-            queryOpts = {"limit": 10,"order": "-completion_time"}
+            queryOpts = {"limit": 10, "order": "-completion_time"}
             tasks = session.listTasks(opts, queryOpts)
             for brew_task in tasks:
                 parent_id = brew_task["parent"]
                 build = session.listBuilds(taskID=parent_id)
                 if len(build) != 0:
-                    self.task_list.append(task(
-                                            task_id = brew_task["id"],
-                                            parent_id=brew_task["parent"],
-                                            build_info=build[0]
-                    ))
+                    self.task_list.append(
+                        task(
+                            task_id=brew_task["id"],
+                            parent_id=brew_task["parent"],
+                            build_info=build[0],
+                        )
+                    )
                     break
         else:
-            self.task_list.append(task(
-                                    task_id=tasks[0]["id"],
-                                    parent_id=tasks[0]["parent"],
-                                    build_info=tasks[0]
-            ))
+            self.task_list.append(
+                task(
+                    task_id=tasks[0]["id"],
+                    parent_id=tasks[0]["parent"],
+                    build_info=tasks[0],
+                )
+            )
+
 
 class task:
     """
