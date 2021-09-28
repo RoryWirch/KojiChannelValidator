@@ -11,6 +11,17 @@ class channel:
         self.id = int(id)
         self.host_list = []
 
+    def collect_hosts(self, session):
+        """
+        Finds all the hosts for the channel and adds them to host_list
+        """
+        list_host_response = session.listHosts(channelID=self.id)
+
+        for hosts in list_host_response:
+            self.host_list.append(
+                host(name=hosts["name"], id=hosts["id"], enabled=hosts["enabled"])
+            )
+
 
 class host:
     """
@@ -58,3 +69,6 @@ if __name__ == "__main__":
     session = mykoji.ClientSession(mykoji.config.server, opts)
 
     channels = collect_channels(session)
+
+    for channel in channels:
+        channel.collect_hosts(session)
