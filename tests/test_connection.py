@@ -2,8 +2,9 @@ import pytest
 from connection import get_host
 
 
-def test_get_host_without_env_var():
+def test_get_host_without_env_var(monkeypatch):
     # Ensure that we get a SystemExit when we have no PGHOST env var set
+    monkeypatch.delenv("PGHOST")
     with pytest.raises(SystemExit) as e:
         get_host()
     assert str(e.value) == "Please set the PGHOST environment"
