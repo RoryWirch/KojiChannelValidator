@@ -18,9 +18,9 @@ class channel:
         list_host_response = session.listHosts(channelID=self.id)
 
         for hosts in list_host_response:
-            self.host_list.append(host(name=hosts["name"],
-                                        id=hosts["id"],
-                                        enabled=hosts["enabled"]))
+            self.host_list.append(
+                host(name=hosts["name"], id=hosts["id"], enabled=hosts["enabled"])
+            )
 
 
 class host:
