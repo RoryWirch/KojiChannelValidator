@@ -34,16 +34,58 @@ class host:
         self.enabled = bool(enabled)
         self.task_list = []
 
+    def find_builds_for_host(self, session):
+        """
+        Tries to find a non scratch build for the host
+        """
+        opts = {
+                "host_id": self.id,
+                "method": "buildArch",
+                "state": [koji.TASK_STATES["CLOSED"]],
+                "decode": "True",
+            }
+        queryOpts = {"limit": 1, "order": "-completion_time"}
+
+        tasks = session.listTasks(opts, queryOpts)
+
+        # Don't add any tasks if none are found for the host
+        if len(tasks) == 0:
+            return
+        
+        # Check build info for task and check for scratch build
+        parent_id = tasks[0]["parent"]
+        build = session.listBuilds(taskID=parent_id)
+        # Scratch build is found if build info is empty. Retry query opts
+        # for past 10 builds for the host
+        if len(build) == 0:
+            queryOpts = {"limit": 10,"order": "-completion_time"}
+            tasks = session.listTasks(opts, queryOpts)
+            for brew_task in tasks:
+                parent_id = brew_task["parent"]
+                build = session.listBuilds(taskID=parent_id)
+                if len(build) != 0:
+                    self.task_list.append(task(
+                                            task_id = brew_task["id"],
+                                            parent_id=brew_task["parent"],
+                                            build_info=build[0]
+                    ))
+                    break
+        else:
+            self.task_list.append(task(
+                                    task_id=tasks[0]["id"],
+                                    parent_id=tasks[0]["parent"],
+                                    build_info=tasks[0]
+            ))
 
 class task:
     """
     Brew task
     """
 
-    def __init__(self, task_id, parent_id):
+    def __init__(self, task_id, parent_id, build_info):
         self.task_id = int(task_id)
         self.parent_id = int(parent_id)
-        self.build_info = []
+        self.build_info = build_info
 
 
 def collect_channels(session):
@@ -72,3 +114,5 @@ if __name__ == "__main__":
 
     for channel in channels:
         channel.collect_hosts(session)
+        for host in channel.host_list:
+            host.find_builds_for_host(session)
