@@ -1,6 +1,11 @@
 import pytest
+import koji
 import channel_validator as cv
 
+# Session object for use in monkeypatching
+mykoji = koji.get_profile_module("brew")
+opts = vars(mykoji.config)
+session = mykoji.ClientSession(mykoji.config.server, opts)
 
 def test_task_constructor(test_list_task_data):
     list_task_response = test_list_task_data
@@ -8,6 +13,64 @@ def test_task_constructor(test_list_task_data):
 
     assert test_task.task_id == 37493015 and test_task.parent_id == 37492841
 
+# Class to mock koji session will override responses from brew API calls
+class MockSession:
+
+    # mock listChannels always returns a specific testing list
+    @staticmethod
+    def list_channels():
+        return [
+            {"id": 1, "name": "default"},
+            {"id": 2, "name": "runroot"},
+            {"id": 3, "name": "createrepo"},
+            {"id": 4, "name": "maven"},
+            {"id": 5, "name": "livecd"},
+            {"id": 6, "name": "testing"},
+            {"id": 7, "name": "runroot-local"},
+            {"id": 8, "name": "appliance"},
+            {"id": 9, "name": "overflow"},
+            {"id": 10, "name": "vm"},
+            {"id": 11, "name": "rhel7"},
+            {"id": 12, "name": "bluegene"},
+            {"id": 13, "name": "dupsign"},
+            {"id": 14, "name": "image"},
+            {"id": 15, "name": "aarch64"},
+            {"id": 16, "name": "ppc64le"},
+            {"id": 17, "name": "fedora"},
+            {"id": 18, "name": "testing2"},
+            {"id": 19, "name": "epel"},
+            {"id": 20, "name": "container"},
+            {"id": 21, "name": "rhel8"},
+            {"id": 22, "name": "retired"},
+            {"id": 23, "name": "dupsign-old"},
+            {"id": 24, "name": "testing3"},
+            {"id": 25, "name": "rhel8-power9"},
+            {"id": 26, "name": "rhel7-power8"},
+            {"id": 27, "name": "rhel8-z13"},
+            {"id": 28, "name": "rhel8-dupsign"},
+            {"id": 29, "name": "suse"},
+            {"id": 30, "name": "livemedia"},
+            {"id": 31, "name": "rhel8-image"},
+            {"id": 32, "name": "rhel8-beefy"},
+            {"id": 33, "name": "rhel7-beefy"},
+            {"id": 34, "name": "maintenance"},
+            {"id": 35, "name": "rhel9"},
+            {"id": 36, "name": "rhel9-image"},
+            {"id": 37, "name": "rhel9-dupsign"},
+        ]
+
+
+def test_collect_channels(monkeypatch):
+
+    def mock_list_channels(*args, **kwargs):
+        mockSession = MockSession()
+        return mockSession.list_channels()
+    
+    monkeypatch.setattr(session, "listChannels", mock_list_channels)
+
+    channel_list = cv.collect_channels(session)
+
+    assert len(channel_list) == 37
 
 @pytest.fixture
 def test_list_channel_data():
