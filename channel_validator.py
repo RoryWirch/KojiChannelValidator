@@ -146,12 +146,6 @@ if __name__ == "__main__":
 
     channels = collect_channels(session)
 
-    # for channel in channels:
-    #     channel.collect_hosts(session)
-    #     for host in channel.host_list:
-    #         host.find_builds_for_host(session)
-
-    # str method testing
     for channel in channels:
         channel.collect_hosts(session)
         for hosts in channel.host_list:
