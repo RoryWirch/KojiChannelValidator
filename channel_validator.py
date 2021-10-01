@@ -1,6 +1,7 @@
 import koji
 from pprint import pprint
 
+
 class channel:
     """
     Brew build channel
@@ -15,7 +16,9 @@ class channel:
         """
         Returns a str for a channel object
         """
-        channel_str = f"Channel: {self.name}\nChannel ID: {self.id}\nHosts in Channel: [\n"
+        channel_str = (
+            f"Channel: {self.name}\nChannel ID: {self.id}\nHosts in Channel: [\n"
+        )
         for hosts in self.host_list:
             channel_str += f"{hosts}\n"
         channel_str += "]"
