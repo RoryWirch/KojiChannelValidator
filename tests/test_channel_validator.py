@@ -7,11 +7,13 @@ mykoji = koji.get_profile_module("brew")
 opts = vars(mykoji.config)
 session = mykoji.ClientSession(mykoji.config.server, opts)
 
+
 def test_task_constructor(test_list_task_data):
     list_task_response = test_list_task_data
     test_task = cv.task(list_task_response[0]["id"], list_task_response[0]["parent"])
 
     assert test_task.task_id == 37493015 and test_task.parent_id == 37492841
+
 
 # Class to mock koji session will override responses from brew API calls
 class MockSession:
@@ -61,16 +63,16 @@ class MockSession:
 
 
 def test_collect_channels(monkeypatch):
-
     def mock_list_channels(*args, **kwargs):
         mockSession = MockSession()
         return mockSession.list_channels()
-    
+
     monkeypatch.setattr(session, "listChannels", mock_list_channels)
 
     channel_list = cv.collect_channels(session)
 
     assert len(channel_list) == 37
+
 
 @pytest.fixture
 def test_list_channel_data():
