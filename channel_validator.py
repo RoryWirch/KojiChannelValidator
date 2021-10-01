@@ -11,6 +11,17 @@ class channel:
         self.id = int(id)
         self.host_list = []
 
+    def __str__(self):
+        """
+        Returns a str for a channel object
+        """
+        channel_str = f"Channel: {self.name}\nID: {self.id}\nHosts in channel: [\n"
+        for hosts in self.host_list:
+            channel_str += f"\t{hosts}\n"
+        channel_str += "]"
+
+        return channel_str
+
     def collect_hosts(self, session):
         """
         Finds all the hosts for the channel and adds them to host_list
@@ -117,7 +128,12 @@ if __name__ == "__main__":
 
     channels = collect_channels(session)
 
+    # for channel in channels:
+    #     channel.collect_hosts(session)
+    #     for host in channel.host_list:
+    #         host.find_builds_for_host(session)
+
+    # str method testing
     for channel in channels:
         channel.collect_hosts(session)
-        for host in channel.host_list:
-            host.find_builds_for_host(session)
+        print(channel)
