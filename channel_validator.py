@@ -1,5 +1,5 @@
 import koji
-
+from pprint import pprint
 
 class channel:
     """
@@ -15,9 +15,9 @@ class channel:
         """
         Returns a str for a channel object
         """
-        channel_str = f"Channel: {self.name}\nID: {self.id}\nHosts in channel: [\n"
+        channel_str = f"Channel: {self.name}\nChannel ID: {self.id}\nHosts in Channel: [\n"
         for hosts in self.host_list:
-            channel_str += f"\t{hosts}\n"
+            channel_str += f"{hosts}\n"
         channel_str += "]"
 
         return channel_str
@@ -44,6 +44,17 @@ class host:
         self.id = int(id)
         self.enabled = bool(enabled)
         self.task_list = []
+
+    def __str__(self):
+        """
+        Returns a string for the host object
+        """
+        host_str = f"Host Name: {self.name}\nHost ID: {self.id}\nEnabled: {self.enabled}\nTask List: [\n"
+        for tasks in self.task_list:
+            host_str += f"tasks: {tasks}"
+        host_str += "]"
+
+        return host_str
 
     def find_builds_for_host(self, session):
         """
@@ -103,6 +114,13 @@ class task:
         self.parent_id = int(parent_id)
         self.build_info = build_info
 
+    def __str__(self):
+        """
+        Returns a string for a task object
+        """
+        task_str = f"Task ID: {self.task_id}\nParent ID: {self.parent_id}\nBuild Info: {self.build_info}"
+        return task_str
+
 
 def collect_channels(session):
     """
@@ -136,4 +154,7 @@ if __name__ == "__main__":
     # str method testing
     for channel in channels:
         channel.collect_hosts(session)
+        for hosts in channel.host_list:
+            hosts.find_builds_for_host(session)
+            print(hosts)
         print(channel)
