@@ -13,7 +13,7 @@ def del_session_requests(monkeypatch):
     """
     Delete rsession attr from session to avoid brew API calls
     """
-    monkeypatch.delattr(session,"rsession")
+    monkeypatch.delattr(session, "rsession")
 
 
 def test_task_constructor(test_list_task_data):
