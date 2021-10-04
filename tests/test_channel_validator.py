@@ -8,6 +8,14 @@ opts = vars(mykoji.config)
 session = mykoji.ClientSession(mykoji.config.server, opts)
 
 
+@pytest.fixture(autouse=True)
+def del_session_requests(monkeypatch):
+    """
+    Delete rsession attr from session to avoid brew API calls
+    """
+    monkeypatch.delattr(session,"rsession")
+
+
 def test_task_constructor(test_list_task_data):
     list_task_response = test_list_task_data
     test_task = cv.task(list_task_response[0]["id"], list_task_response[0]["parent"])
