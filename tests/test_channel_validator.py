@@ -69,14 +69,25 @@ class MockSession:
             {"id": 37, "name": "rhel9-dupsign"},
         ]
 
-
-def test_collect_channels(monkeypatch):
+@pytest.fixture
+def mock_session_response(monkeypatch):
+    """
+    Mocked responses for brew session
+    """
     def mock_list_channels(*args, **kwargs):
+        """
+        Covers default response of session.listChannels()
+        """
         mockSession = MockSession()
         return mockSession.list_channels()
 
     monkeypatch.setattr(session, "listChannels", mock_list_channels)
 
+
+def test_collect_channels(mock_session_response):
+    """
+    Tests for functioning of collect_channels function
+    """
     channel_list = cv.collect_channels(session)
 
     assert len(channel_list) == 37
