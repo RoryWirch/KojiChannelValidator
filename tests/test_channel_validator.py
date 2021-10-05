@@ -69,11 +69,13 @@ class MockSession:
             {"id": 37, "name": "rhel9-dupsign"},
         ]
 
+
 @pytest.fixture
 def mock_session_response(monkeypatch):
     """
     Mocked responses for brew session
     """
+
     def mock_list_channels(*args, **kwargs):
         """
         Covers default response of session.listChannels()
