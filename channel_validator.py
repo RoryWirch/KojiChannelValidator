@@ -33,7 +33,13 @@ class channel:
 
         for hosts in list_host_response:
             self.host_list.append(
-                host(name=hosts["name"], id=hosts["id"], enabled=hosts["enabled"])
+                host(
+                    name=hosts["name"],
+                    id=hosts["id"],
+                    enabled=hosts["enabled"],
+                    arches=hosts["arches"],
+                    description=hosts["description"],
+                )
             )
 
 
@@ -42,11 +48,19 @@ class host:
     Brew build host
     """
 
-    def __init__(self, name, id, enabled):
+    def __init__(self, name, id, enabled, arches, description):
         self.name = str(name)
         self.id = int(id)
         self.enabled = bool(enabled)
         self.task_list = []
+        hw_keys = ["arches", "CPU(s)", "Ram", "Disk", "Kernel", "Operating System"]
+        self.hw_dict = {key: None for key in hw_keys}
+        self.hw_dict["arches"] = arches.split(" ")
+        description_list = description.split("\n")
+        for lines in description_list:
+            line_split = lines.split(": ")
+            if line_split[0] in hw_keys:
+                self.hw_dict[line_split[0]] = line_split[1]
 
     def __str__(self):
         """
@@ -55,8 +69,11 @@ class host:
         host_str = f"Host Name: {self.name}\nHost ID: {self.id}\nEnabled: {self.enabled}\nTask List: [\n"
         for tasks in self.task_list:
             host_str += f"tasks: {tasks}"
-        host_str += "]"
-
+        host_str += "]\n"
+        host_str += "hw_info: {\n"
+        for key in self.hw_dict.keys():
+            host_str += f"{key}: {self.hw_dict[key]}\n"
+        host_str += "}"
         return host_str
 
     def find_builds_for_host(self, session):
@@ -102,7 +119,7 @@ class host:
                 task(
                     task_id=tasks[0]["id"],
                     parent_id=tasks[0]["parent"],
-                    build_info=tasks[0],
+                    build_info=build[0],
                 )
             )
 
@@ -152,6 +169,15 @@ if __name__ == "__main__":
     for channel in channels:
         channel.collect_hosts(session)
         for hosts in channel.host_list:
-            hosts.find_builds_for_host(session)
+            # hosts.find_builds_for_host(session)
             print(hosts)
         print(channel)
+
+    # rhel8 = channels[20]  # should be channel 21, rhel8
+    # rhel8.collect_hosts(session)
+
+    # for hosts in rhel8.host_list:
+    #     hosts.find_builds_for_host(session)
+    #     print(hosts)
+
+    # print(rhel8)
