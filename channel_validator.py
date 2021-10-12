@@ -123,6 +123,22 @@ class host:
                 )
             )
 
+    def get_hw_info(self, session):
+        """
+        Gets hardware information for a host. Downloads hw_info.log for the
+        hosts architecture and pulls hardware information from the log.
+        """
+        if len(self.task_list) == 0:
+            return False
+
+        build_id = self.task_list[0].build_info["build_id"]
+        all_logs = session.getBuildLogs(build_id)
+
+        for log in all_logs:
+            if log["name"] == "hw_info.log" and log["dir"] in self.hw_info["arches"]:
+                hw_log = log
+                break
+
 
 class task:
     """
