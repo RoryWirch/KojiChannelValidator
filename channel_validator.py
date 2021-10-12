@@ -1,3 +1,5 @@
+import os
+import requests
 import koji
 from pprint import pprint
 
@@ -135,9 +137,23 @@ class host:
         all_logs = session.getBuildLogs(build_id)
 
         for log in all_logs:
-            if log["name"] == "hw_info.log" and log["dir"] in self.hw_info["arches"]:
+            if log["name"] == "hw_info.log" and log["dir"] in self.hw_dict["arches"]:
                 hw_log = log
                 break
+
+        # Make URL for hw_log and use requests.get(url) to download log
+        mykoji = koji.get_profile_module("brew")
+        url = os.path.join(mykoji.config.topurl, hw_log["path"])
+        response = requests.get(url)
+        hw_log_str = response.text()
+
+        for line in hw_log_str.split("\n"):
+            line_split = line.split(":")
+            if line_split[0] == "CPU(s)":
+                cpu_split = line.split(":")
+                cpu_split = cpu_split.strip("")
+                self.hw_dict["CPU(s)"] = cpu_split[1]
+                continue
 
 
 class task:
