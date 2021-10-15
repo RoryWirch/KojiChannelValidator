@@ -411,10 +411,10 @@ def test_get_hw_info(mock_session_response, test_host_with_build):
     Tests for functioning of collect_hw_info function
     """
     test_94_hw_dict = {
-        "arches": ["ppc", "ppc64le"],
+        "arches": "ppc64le",
         "CPU(s)": 8,
         "Ram": 24050560,
-        "Disk": 198,
+        "Disk": "198G",
         "Kernel": "4.18.0-193.28.1.el8_2.ppc64le",
         "Operating System": "RedHat 8.2",
     }
