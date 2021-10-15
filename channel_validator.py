@@ -1,6 +1,7 @@
 import os
 import requests
 import koji
+import re
 from pprint import pprint
 
 
@@ -147,13 +148,26 @@ class host:
         response = requests.get(url)
         hw_log_str = response.text()
 
-        for line in hw_log_str.split("\n"):
-            line_split = line.split(":")
-            if line_split[0] == "CPU(s)":
-                cpu_split = line.split(":")
-                cpu_split = cpu_split.strip("")
-                self.hw_dict["CPU(s)"] = cpu_split[1]
+        hw_log_lines = hw_log_str.split("\n")
+        hw_log_lines = [re.sub(r"\s+",",",line) for line in hw_log_lines]
+
+        for line in hw_log_lines:
+            line_split = line.split(",")
+            if line_split[0] == "Architecture:":
+                self.hw_dict["arches"] = line_split[1]
                 continue
+            if line_split[0] == "CPU(s):":
+                self.hw_dict["CPU(s)"] = int(line_split[1])
+                continue
+            if line_split[0] == "Mem:":
+                self.hw_dict["Ram"] = int(line_split[1])
+                continue
+            disk_match = re.match(r"^/",line_split[0])
+            if disk_match:
+                self.hw_dict["Disk"] = line_split[1]
+                continue
+
+        return True
 
 
 class task:
