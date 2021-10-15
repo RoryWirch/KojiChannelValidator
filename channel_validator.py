@@ -149,7 +149,7 @@ class host:
         hw_log_str = response.text()
 
         hw_log_lines = hw_log_str.split("\n")
-        hw_log_lines = [re.sub(r"\s+",",",line) for line in hw_log_lines]
+        hw_log_lines = [re.sub(r"\s+", ",", line) for line in hw_log_lines]
 
         for line in hw_log_lines:
             line_split = line.split(",")
@@ -162,7 +162,7 @@ class host:
             if line_split[0] == "Mem:":
                 self.hw_dict["Ram"] = int(line_split[1])
                 continue
-            disk_match = re.match(r"^/",line_split[0])
+            disk_match = re.match(r"^/", line_split[0])
             if disk_match:
                 self.hw_dict["Disk"] = line_split[1]
                 continue
