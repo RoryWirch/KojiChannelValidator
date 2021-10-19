@@ -356,6 +356,7 @@ class MockSession:
         return "CPU info:\nArchitecture:        ppc64le\nByte Order:          Little Endian\nCPU(s):              8\nOn-line CPU(s) list: 0-7\nThread(s) per core:  1\nCore(s) per socket:  8\nSocket(s):           1\nNUMA node(s):        1\nModel:               2.1 (pvr 004b 0201)\nModel name:          POWER8 (architected), altivec supported\nHypervisor vendor:   KVM\nVirtualization type: para\nL1d cache:           64K\nL1i cache:           32K\nNUMA node0 CPU(s):   0-7\n\n\nMemory:\n              total        used        free      shared  buff/cache   available\nMem:       24050560     1062144    16829376      158912     6159040    22675264\nSwap:      15744960       64000    15680960\n\n\nStorage:\nFilesystem             Size  Used Avail Use% Mounted on\n/dev/mapper/rhel-root  198G  6.3G  192G   4% /\n"
 
 
+
 @pytest.fixture
 def mock_session_response(monkeypatch):
     """
