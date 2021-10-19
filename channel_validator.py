@@ -1,4 +1,7 @@
+import os
+import requests
 import koji
+import re
 from pprint import pprint
 
 
@@ -33,7 +36,13 @@ class channel:
 
         for hosts in list_host_response:
             self.host_list.append(
-                host(name=hosts["name"], id=hosts["id"], enabled=hosts["enabled"])
+                host(
+                    name=hosts["name"],
+                    id=hosts["id"],
+                    enabled=hosts["enabled"],
+                    arches=hosts["arches"],
+                    description=hosts["description"],
+                )
             )
 
 
@@ -42,11 +51,19 @@ class host:
     Brew build host
     """
 
-    def __init__(self, name, id, enabled):
+    def __init__(self, name, id, enabled, arches, description):
         self.name = str(name)
         self.id = int(id)
         self.enabled = bool(enabled)
         self.task_list = []
+        hw_keys = ["arches", "CPU(s)", "Ram", "Disk", "Kernel", "Operating System"]
+        self.hw_dict = {key: None for key in hw_keys}
+        self.hw_dict["arches"] = arches.split(" ")
+        description_list = description.split("\n")
+        for lines in description_list:
+            line_split = lines.split(": ")
+            if line_split[0] in hw_keys:
+                self.hw_dict[line_split[0]] = line_split[1]
 
     def __str__(self):
         """
@@ -55,8 +72,11 @@ class host:
         host_str = f"Host Name: {self.name}\nHost ID: {self.id}\nEnabled: {self.enabled}\nTask List: [\n"
         for tasks in self.task_list:
             host_str += f"tasks: {tasks}"
-        host_str += "]"
-
+        host_str += "]\n"
+        host_str += "hw_info: {\n"
+        for key in self.hw_dict.keys():
+            host_str += f"{key}: {self.hw_dict[key]}\n"
+        host_str += "}"
         return host_str
 
     def find_builds_for_host(self, session):
@@ -102,9 +122,52 @@ class host:
                 task(
                     task_id=tasks[0]["id"],
                     parent_id=tasks[0]["parent"],
-                    build_info=tasks[0],
+                    build_info=build[0],
                 )
             )
+
+    def get_hw_info(self, session):
+        """
+        Gets hardware information for a host. Downloads hw_info.log for the
+        hosts architecture and pulls hardware information from the log.
+        """
+        if len(self.task_list) == 0:
+            return False
+
+        build_id = self.task_list[0].build_info["build_id"]
+        all_logs = session.getBuildLogs(build_id)
+
+        for log in all_logs:
+            if log["name"] == "hw_info.log" and log["dir"] in self.hw_dict["arches"]:
+                hw_log = log
+                break
+
+        # Make URL for hw_log and use requests.get(url) to download log
+        mykoji = koji.get_profile_module("brew")
+        url = os.path.join(mykoji.config.topurl, hw_log["path"])
+        response = requests.get(url)
+        hw_log_str = response.text()
+
+        hw_log_lines = hw_log_str.split("\n")
+        hw_log_lines = [re.sub(r"\s+", ",", line) for line in hw_log_lines]
+
+        for line in hw_log_lines:
+            line_split = line.split(",")
+            if line_split[0] == "Architecture:":
+                self.hw_dict["arches"] = line_split[1]
+                continue
+            if line_split[0] == "CPU(s):":
+                self.hw_dict["CPU(s)"] = int(line_split[1])
+                continue
+            if line_split[0] == "Mem:":
+                self.hw_dict["Ram"] = int(line_split[1])
+                continue
+            disk_match = re.match(r"^/", line_split[0])
+            if disk_match:
+                self.hw_dict["Disk"] = line_split[1]
+                continue
+
+        return True
 
 
 class task:
@@ -152,6 +215,15 @@ if __name__ == "__main__":
     for channel in channels:
         channel.collect_hosts(session)
         for hosts in channel.host_list:
-            hosts.find_builds_for_host(session)
+            # hosts.find_builds_for_host(session)
             print(hosts)
         print(channel)
+
+    # rhel8 = channels[20]  # should be channel 21, rhel8
+    # rhel8.collect_hosts(session)
+
+    # for hosts in rhel8.host_list:
+    #     hosts.find_builds_for_host(session)
+    #     print(hosts)
+
+    # print(rhel8)
