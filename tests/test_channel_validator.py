@@ -17,13 +17,6 @@ def del_session_requests(monkeypatch):
     monkeypatch.delattr(session, "rsession")
 
 
-def test_task_constructor(test_list_task_data):
-    list_task_response = test_list_task_data
-    test_task = cv.task(list_task_response[0]["id"], list_task_response[0]["parent"])
-
-    assert test_task.task_id == 37493015 and test_task.parent_id == 37492841
-
-
 # Class to mock koji session will override responses from brew API calls
 class MockSession:
 
