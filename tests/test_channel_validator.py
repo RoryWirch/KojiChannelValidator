@@ -44,49 +44,6 @@ class MockSession:
     def __getattr__(self, name):
         return FakeCall(name)
 
-    # mock listChannels always returns a specific testing list
-    @staticmethod
-    def list_channels():
-        return [
-            {"id": 1, "name": "default"},
-            {"id": 2, "name": "runroot"},
-            {"id": 3, "name": "createrepo"},
-            {"id": 4, "name": "maven"},
-            {"id": 5, "name": "livecd"},
-            {"id": 6, "name": "testing"},
-            {"id": 7, "name": "runroot-local"},
-            {"id": 8, "name": "appliance"},
-            {"id": 9, "name": "overflow"},
-            {"id": 10, "name": "vm"},
-            {"id": 11, "name": "rhel7"},
-            {"id": 12, "name": "bluegene"},
-            {"id": 13, "name": "dupsign"},
-            {"id": 14, "name": "image"},
-            {"id": 15, "name": "aarch64"},
-            {"id": 16, "name": "ppc64le"},
-            {"id": 17, "name": "fedora"},
-            {"id": 18, "name": "testing2"},
-            {"id": 19, "name": "epel"},
-            {"id": 20, "name": "container"},
-            {"id": 21, "name": "rhel8"},
-            {"id": 22, "name": "retired"},
-            {"id": 23, "name": "dupsign-old"},
-            {"id": 24, "name": "testing3"},
-            {"id": 25, "name": "rhel8-power9"},
-            {"id": 26, "name": "rhel7-power8"},
-            {"id": 27, "name": "rhel8-z13"},
-            {"id": 28, "name": "rhel8-dupsign"},
-            {"id": 29, "name": "suse"},
-            {"id": 30, "name": "livemedia"},
-            {"id": 31, "name": "rhel8-image"},
-            {"id": 32, "name": "rhel8-beefy"},
-            {"id": 33, "name": "rhel7-beefy"},
-            {"id": 34, "name": "maintenance"},
-            {"id": 35, "name": "rhel9"},
-            {"id": 36, "name": "rhel9-image"},
-            {"id": 37, "name": "rhel9-dupsign"},
-        ]
-
     # mock get_build returns test data to mock session.getBuild()
     @staticmethod
     def get_build(build_id):
@@ -414,11 +371,11 @@ def mock_session_response(monkeypatch):
     monkeypatch.setattr(requests, "get", mock_request_get)
 
 
-def test_collect_channels(mock_session_response):
+def test_collect_channels():
     """
     Tests for functioning of collect_channels function
     """
-    channel_list = cv.collect_channels(session)
+    channel_list = cv.collect_channels(MockSession())
 
     assert len(channel_list) == 37
 
