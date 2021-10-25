@@ -28,8 +28,12 @@ class FakeCall:
         self.name = name
 
     def __call__(self, *args, **kwargs):
-        filename = self.name + ".json"
-        fixture = os.path.join(FIXTURES_DIR, "calls", filename)
+        if self.name == "getBuildLogs":
+            filename = str(args[0]) + ".json"
+            fixture = os.path.join(FIXTURES_DIR, "calls", "getBuildLogs", filename)
+        else:
+            filename = self.name + ".json"
+            fixture = os.path.join(FIXTURES_DIR, "calls", filename)
         try:
             with open(fixture) as fp:
                 return json.load(fp)
@@ -117,195 +121,7 @@ class MockSession:
             },
         }
         return build_dict[build_id]
-
-    # returns test data to mock session.getBuildLogs()
-    @staticmethod
-    def get_build_logs(build_id):
-        """
-        returns the test build log info for a given build
-        """
-        log_dict = {
-            "1753791": [
-                {
-                    "dir": "noarch",
-                    "name": "state.log",
-                    "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/state.log",
-                },
-                {
-                    "dir": "noarch",
-                    "name": "build.log",
-                    "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/build.log",
-                },
-                {
-                    "dir": "noarch",
-                    "name": "root.log",
-                    "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/root.log",
-                },
-                {
-                    "dir": "noarch",
-                    "name": "mock_output.log",
-                    "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/mock_output.log",
-                },
-                {
-                    "dir": "noarch",
-                    "name": "noarch_rpmdiff.json",
-                    "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/noarch_rpmdiff.json",
-                },
-            ],
-            "1757570": [
-                {
-                    "dir": "aarch64",
-                    "name": "hw_info.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/hw_info.log",
-                },
-                {
-                    "dir": "aarch64",
-                    "name": "state.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/state.log",
-                },
-                {
-                    "dir": "aarch64",
-                    "name": "build.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/build.log",
-                },
-                {
-                    "dir": "aarch64",
-                    "name": "root.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/root.log",
-                },
-                {
-                    "dir": "aarch64",
-                    "name": "installed_pkgs.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/installed_pkgs.log",
-                },
-                {
-                    "dir": "aarch64",
-                    "name": "mock_output.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/mock_output.log",
-                },
-                {
-                    "dir": "i686",
-                    "name": "hw_info.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/hw_info.log",
-                },
-                {
-                    "dir": "i686",
-                    "name": "state.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/state.log",
-                },
-                {
-                    "dir": "i686",
-                    "name": "build.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/build.log",
-                },
-                {
-                    "dir": "i686",
-                    "name": "root.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/root.log",
-                },
-                {
-                    "dir": "i686",
-                    "name": "installed_pkgs.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/installed_pkgs.log",
-                },
-                {
-                    "dir": "i686",
-                    "name": "mock_output.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/mock_output.log",
-                },
-                {
-                    "dir": "ppc64le",
-                    "name": "hw_info.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/hw_info.log",
-                },
-                {
-                    "dir": "ppc64le",
-                    "name": "state.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/state.log",
-                },
-                {
-                    "dir": "ppc64le",
-                    "name": "build.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/build.log",
-                },
-                {
-                    "dir": "ppc64le",
-                    "name": "root.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/root.log",
-                },
-                {
-                    "dir": "ppc64le",
-                    "name": "installed_pkgs.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/installed_pkgs.log",
-                },
-                {
-                    "dir": "ppc64le",
-                    "name": "mock_output.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/mock_output.log",
-                },
-                {
-                    "dir": "s390x",
-                    "name": "hw_info.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/hw_info.log",
-                },
-                {
-                    "dir": "s390x",
-                    "name": "state.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/state.log",
-                },
-                {
-                    "dir": "s390x",
-                    "name": "build.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/build.log",
-                },
-                {
-                    "dir": "s390x",
-                    "name": "root.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/root.log",
-                },
-                {
-                    "dir": "s390x",
-                    "name": "installed_pkgs.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/installed_pkgs.log",
-                },
-                {
-                    "dir": "s390x",
-                    "name": "mock_output.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/mock_output.log",
-                },
-                {
-                    "dir": "x86_64",
-                    "name": "hw_info.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/hw_info.log",
-                },
-                {
-                    "dir": "x86_64",
-                    "name": "state.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/state.log",
-                },
-                {
-                    "dir": "x86_64",
-                    "name": "build.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/build.log",
-                },
-                {
-                    "dir": "x86_64",
-                    "name": "root.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/root.log",
-                },
-                {
-                    "dir": "x86_64",
-                    "name": "installed_pkgs.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/installed_pkgs.log",
-                },
-                {
-                    "dir": "x86_64",
-                    "name": "mock_output.log",
-                    "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/mock_output.log",
-                },
-            ],
-        }
-        return log_dict[str(build_id)]
+        
 
     @staticmethod
     def requests_get(url):
@@ -394,7 +210,7 @@ def test_get_hw_info(mock_session_response, test_host_with_build):
     }
     my_host = test_host_with_build
 
-    my_host.get_hw_info(session)
+    my_host.get_hw_info(MockSession())
 
     assert my_host.hw_dict == test_94_hw_dict
 
