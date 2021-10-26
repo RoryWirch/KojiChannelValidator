@@ -3,6 +3,7 @@ import os
 import pytest
 import koji
 import requests
+import yaml
 import channel_validator as cv
 
 # Session object for use in monkeypatching
@@ -28,9 +29,10 @@ class FakeCall:
         self.name = name
 
     def __call__(self, *args, **kwargs):
-        if self.name == "getBuildLogs":
+        call_dirs = ["getBuildLogs", "getBuild"]
+        if self.name in call_dirs:
             filename = str(args[0]) + ".json"
-            fixture = os.path.join(FIXTURES_DIR, "calls", "getBuildLogs", filename)
+            fixture = os.path.join(FIXTURES_DIR, "calls", self.name, filename)
         else:
             filename = self.name + ".json"
             fixture = os.path.join(FIXTURES_DIR, "calls", filename)
@@ -121,7 +123,7 @@ class MockSession:
             },
         }
         return build_dict[build_id]
-        
+
 
     @staticmethod
     def requests_get(url):
@@ -213,6 +215,45 @@ def test_get_hw_info(mock_session_response, test_host_with_build):
     my_host.get_hw_info(MockSession())
 
     assert my_host.hw_dict == test_94_hw_dict
+
+
+def test_config_checker(test_channel_with_hosts):
+    """
+    Tests that channel.config_check and compare_hosts is working
+    """
+    channel = test_channel_with_hosts
+    channel.config_check()
+
+    config_items = sum([len(elem) for elem in channel.config_groups])
+
+    assert config_items == 8 and len(channel.config_groups) == 5
+
+
+@pytest.fixture
+def test_channel_with_hosts():
+    """
+    Sets up a test channel with hosts for config checking 
+    """
+    test_channel = cv.channel(name="dummy-rhel8", id=21)
+
+    # set up hosts for the channel. Host data is loaded from .yml
+    with open("tests/fixtures/hosts/hosts.yml", "r") as fp:
+        host_yml = yaml.safe_load(fp)
+
+        for hosts in host_yml:
+            cur_yml = host_yml[hosts]
+            tmp_host = cv.host(
+                cur_yml["Name"],
+                cur_yml["id"],
+                cur_yml["enabled"],
+                cur_yml["arches"],
+                cur_yml["description"])
+            for key in tmp_host.hw_dict:
+                tmp_host.hw_dict[key] = cur_yml[key]
+            test_channel.host_list.append(tmp_host)
+    
+    return test_channel
+
 
 
 @pytest.fixture
