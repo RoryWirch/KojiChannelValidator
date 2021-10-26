@@ -63,16 +63,17 @@ class channel:
             new_grouping = [hosts[i]]
             grouped_set.add(hosts[i])
             for j in range(i + 1, len(hosts)):
-                #if any(hosts[j] in sl for sl in config_groupings):
+                # if any(hosts[j] in sl for sl in config_groupings):
                 if hosts[j] in grouped_set:
                     continue
-                if compare_hosts(hosts[i],hosts[j]):
+                if compare_hosts(hosts[i], hosts[j]):
                     new_grouping.append(hosts[j])
-                    grouped_set.add(hosts[j])        
+                    grouped_set.add(hosts[j])
             config_groupings.append(new_grouping)
 
         print(config_groupings)
         self.config_groups = config_groupings
+
 
 class host:
     """
@@ -197,7 +198,6 @@ class host:
             print(f"end find_builds_for_host(false) at {cur_time}")
             return False
 
-
         # Make URL for hw_log and use requests.get(url) to download log
         mykoji = koji.get_profile_module("brew")
         url = os.path.join(mykoji.config.topurl, hw_log["path"])
@@ -220,7 +220,7 @@ class host:
             if disk_match:
                 self.hw_dict["Disk"] = line_split[1]
                 continue
-        
+
         now = datetime.now()
         cur_time = now.strftime("%H:%M:%S")
         print(f"end find_builds_for_host(true) at {cur_time}")
@@ -254,15 +254,15 @@ def compare_hosts(hostA, hostB):
     if hostA.hw_dict["Ram"] != None and hostB.hw_dict["Ram"] != None:
         a_ram = int(hostA.hw_dict["Ram"])
         b_ram = int(hostB.hw_dict["Ram"])
-        ram_tol = 4000000 # 4gb tolerance for ram similarity
+        ram_tol = 4000000  # 4gb tolerance for ram similarity
         if b_ram < a_ram - ram_tol or b_ram > a_ram + ram_tol:
             similar = False
-    
+
     if hostA.hw_dict["CPU(s)"] != hostB.hw_dict["CPU(s)"]:
         similar = False
 
     return similar
-        
+
 
 def collect_channels(session):
     """
@@ -297,13 +297,19 @@ if __name__ == "__main__":
         hosts.get_hw_info(session)
         print(f"collected host: {hosts.id}")
         time.sleep(30)
-    
+
     rhel8_beefy.config_check()
-    
+
     print(f"rhel8_beefy contains {len(rhel8_beefy.host_list)} hosts")
-    print(f"rhel8_beefy was divided in to {len(rhel8_beefy.config_groups)} configuration groups based on CPU count and Ram")
+    print(
+        f"rhel8_beefy was divided in to {len(rhel8_beefy.config_groups)} configuration groups based on CPU count and Ram"
+    )
     for index, sub_list in enumerate(rhel8_beefy.config_groups):
-        print(f"\n================================ Group {index}/{len(rhel8_beefy.config_groups)} ================================")
+        print(
+            f"\n================================ Group {index}/{len(rhel8_beefy.config_groups)} ================================"
+        )
         for hosts in sub_list:
-            print(f"ID: {hosts.id} arches: {hosts.hw_dict['arches']} CPU(s): {hosts.hw_dict['CPU(s)']} Ram: {hosts.hw_dict['Ram']} Disk: {hosts.hw_dict['Disk']} Kernel: {hosts.hw_dict['Kernel']} O/S: {hosts.hw_dict['Operating System']}")
+            print(
+                f"ID: {hosts.id} arches: {hosts.hw_dict['arches']} CPU(s): {hosts.hw_dict['CPU(s)']} Ram: {hosts.hw_dict['Ram']} Disk: {hosts.hw_dict['Disk']} Kernel: {hosts.hw_dict['Kernel']} O/S: {hosts.hw_dict['Operating System']}"
+            )
     print(rhel8_beefy)
