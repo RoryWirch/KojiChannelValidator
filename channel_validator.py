@@ -209,9 +209,7 @@ class host:
 
         for line in hw_log_lines:
             line_split = line.split(",")
-            # if line_split[0] == "Architecture:":
-            #     self.hw_dict["arches"] = line_split[1]
-            #     continue
+
             if line_split[0] == "CPU(s):":
                 self.hw_dict["CPU(s)"] = int(line_split[1])
                 continue
