@@ -135,18 +135,17 @@ class host:
             return
 
         # Check build info for task and check for scratch build
-        time.sleep(10)
         parent_id = tasks[0]["parent"]
         build = session.listBuilds(taskID=parent_id)
         # Scratch build is found if build info is empty. Retry query opts
         # for past 10 builds for the host
         if len(build) == 0:
             queryOpts = {"limit": 10, "order": "-completion_time"}
-            time.sleep(5)
+
             tasks = session.listTasks(opts, queryOpts)
             for brew_task in tasks:
                 parent_id = brew_task["parent"]
-                time.sleep(5)
+
                 build = session.listBuilds(taskID=parent_id)
                 if len(build) != 0:
                     self.task_list.append(
@@ -293,10 +292,8 @@ if __name__ == "__main__":
 
     for hosts in rhel8_beefy.host_list:
         hosts.find_builds_for_host(session)
-        time.sleep(30)
         hosts.get_hw_info(session)
         print(f"collected host: {hosts.id}")
-        time.sleep(30)
 
     rhel8_beefy.config_check()
 
