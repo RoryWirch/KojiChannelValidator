@@ -2,6 +2,8 @@ import os
 import requests
 import koji
 import re
+import time
+from datetime import datetime
 from pprint import pprint
 
 
@@ -14,6 +16,7 @@ class channel:
         self.name = str(name)
         self.id = int(id)
         self.host_list = []
+        self.config_groups = []
 
     def __str__(self):
         """
@@ -45,6 +48,31 @@ class channel:
                 )
             )
 
+    def config_check(self):
+        """
+        returns a list of host configuration groupings for the channel. Hosts
+        are grouped together based on similar configurations.
+        """
+        hosts = self.host_list
+        config_groupings = []
+        grouped_set = set()
+
+        for i in range(len(hosts)):
+            if hosts[i] in grouped_set:
+                continue
+            new_grouping = [hosts[i]]
+            grouped_set.add(hosts[i])
+            for j in range(i + 1, len(hosts)):
+                #if any(hosts[j] in sl for sl in config_groupings):
+                if hosts[j] in grouped_set:
+                    continue
+                if compare_hosts(hosts[i],hosts[j]):
+                    new_grouping.append(hosts[j])
+                    grouped_set.add(hosts[j])        
+            config_groupings.append(new_grouping)
+
+        print(config_groupings)
+        self.config_groups = config_groupings
 
 class host:
     """
@@ -56,14 +84,19 @@ class host:
         self.id = int(id)
         self.enabled = bool(enabled)
         self.task_list = []
+        self.desc_str = description
         hw_keys = ["arches", "CPU(s)", "Ram", "Disk", "Kernel", "Operating System"]
         self.hw_dict = {key: None for key in hw_keys}
         self.hw_dict["arches"] = arches.split(" ")
-        description_list = description.split("\n")
-        for lines in description_list:
-            line_split = lines.split(": ")
-            if line_split[0] in hw_keys:
-                self.hw_dict[line_split[0]] = line_split[1]
+        # Sometimes the description field is None
+        if description != None:
+            description_list = description.split("\n")
+            for lines in description_list:
+                line_split = lines.split(": ")
+                if line_split[0] in hw_keys:
+                    self.hw_dict[line_split[0]] = line_split[1]
+        else:
+            print(f"NoneType desc found for {self.id}")
 
     def __str__(self):
         """
@@ -83,6 +116,9 @@ class host:
         """
         Tries to find a non scratch build for the host
         """
+        now = datetime.now()
+        cur_time = now.strftime("%H:%M:%S")
+        print(f"starting find_builds_for_host at {cur_time}")
         opts = {
             "host_id": self.id,
             "method": "buildArch",
@@ -98,15 +134,18 @@ class host:
             return
 
         # Check build info for task and check for scratch build
+        time.sleep(10)
         parent_id = tasks[0]["parent"]
         build = session.listBuilds(taskID=parent_id)
         # Scratch build is found if build info is empty. Retry query opts
         # for past 10 builds for the host
         if len(build) == 0:
             queryOpts = {"limit": 10, "order": "-completion_time"}
+            time.sleep(5)
             tasks = session.listTasks(opts, queryOpts)
             for brew_task in tasks:
                 parent_id = brew_task["parent"]
+                time.sleep(5)
                 build = session.listBuilds(taskID=parent_id)
                 if len(build) != 0:
                     self.task_list.append(
@@ -125,37 +164,54 @@ class host:
                     build_info=build[0],
                 )
             )
+        now = datetime.now()
+        cur_time = now.strftime("%H:%M:%S")
+        print(f"end find_builds_for_host at {cur_time}")
 
     def get_hw_info(self, session):
         """
         Gets hardware information for a host. Downloads hw_info.log for the
         hosts architecture and pulls hardware information from the log.
         """
+        now = datetime.now()
+        cur_time = now.strftime("%H:%M:%S")
+        print(f"starting get_hw_info at {cur_time}")
         if len(self.task_list) == 0:
+            now = datetime.now()
+            cur_time = now.strftime("%H:%M:%S")
+            print(f"end find_builds_for_host(false) at {cur_time}")
             return False
 
         build_id = self.task_list[0].build_info["build_id"]
         all_logs = session.getBuildLogs(build_id)
-
+        hw_log = None
         for log in all_logs:
             if log["name"] == "hw_info.log" and log["dir"] in self.hw_dict["arches"]:
                 hw_log = log
                 break
 
+        # Check if hw_logs has been assigned
+        if hw_log == None:
+            now = datetime.now()
+            cur_time = now.strftime("%H:%M:%S")
+            print(f"end find_builds_for_host(false) at {cur_time}")
+            return False
+
+
         # Make URL for hw_log and use requests.get(url) to download log
         mykoji = koji.get_profile_module("brew")
         url = os.path.join(mykoji.config.topurl, hw_log["path"])
         response = requests.get(url)
-        hw_log_str = response.text()
+        hw_log_str = response.text
 
         hw_log_lines = hw_log_str.split("\n")
         hw_log_lines = [re.sub(r"\s+", ",", line) for line in hw_log_lines]
 
         for line in hw_log_lines:
             line_split = line.split(",")
-            if line_split[0] == "Architecture:":
-                self.hw_dict["arches"] = line_split[1]
-                continue
+            # if line_split[0] == "Architecture:":
+            #     self.hw_dict["arches"] = line_split[1]
+            #     continue
             if line_split[0] == "CPU(s):":
                 self.hw_dict["CPU(s)"] = int(line_split[1])
                 continue
@@ -166,7 +222,10 @@ class host:
             if disk_match:
                 self.hw_dict["Disk"] = line_split[1]
                 continue
-
+        
+        now = datetime.now()
+        cur_time = now.strftime("%H:%M:%S")
+        print(f"end find_builds_for_host(true) at {cur_time}")
         return True
 
 
@@ -187,6 +246,25 @@ class task:
         task_str = f"Task ID: {self.task_id}\nParent ID: {self.parent_id}\nBuild Info: {self.build_info}"
         return task_str
 
+
+def compare_hosts(hostA, hostB):
+    """
+    Compares two hosts, if they are similar it will return True, and False otherwise
+    """
+    similar = True
+
+    if hostA.hw_dict["Ram"] != None and hostB.hw_dict["Ram"] != None:
+        a_ram = int(hostA.hw_dict["Ram"])
+        b_ram = int(hostB.hw_dict["Ram"])
+        ram_tol = 4000000 # 4gb tolerance for ram similarity
+        if b_ram < a_ram - ram_tol or b_ram > a_ram + ram_tol:
+            similar = False
+    
+    if hostA.hw_dict["CPU(s)"] != hostB.hw_dict["CPU(s)"]:
+        similar = False
+
+    return similar
+        
 
 def collect_channels(session):
     """
@@ -212,18 +290,22 @@ if __name__ == "__main__":
 
     channels = collect_channels(session)
 
-    for channel in channels:
-        channel.collect_hosts(session)
-        for hosts in channel.host_list:
-            # hosts.find_builds_for_host(session)
-            print(hosts)
-        print(channel)
+    rhel8_beefy = channels[30]
+    rhel8_beefy.collect_hosts(session)
 
-    # rhel8 = channels[20]  # should be channel 21, rhel8
-    # rhel8.collect_hosts(session)
-
-    # for hosts in rhel8.host_list:
-    #     hosts.find_builds_for_host(session)
-    #     print(hosts)
-
-    # print(rhel8)
+    for hosts in rhel8_beefy.host_list:
+        hosts.find_builds_for_host(session)
+        time.sleep(30)
+        hosts.get_hw_info(session)
+        print(f"collected host: {hosts.id}")
+        time.sleep(30)
+    
+    rhel8_beefy.config_check()
+    
+    print(f"rhel8_beefy contains {len(rhel8_beefy.host_list)} hosts")
+    print(f"rhel8_beefy was divided in to {len(rhel8_beefy.config_groups)} configuration groups based on CPU count and Ram")
+    for index, sub_list in enumerate(rhel8_beefy.config_groups):
+        print(f"\n================================ Group {index}/{len(rhel8_beefy.config_groups)} ================================")
+        for hosts in sub_list:
+            print(f"ID: {hosts.id} arches: {hosts.hw_dict['arches']} CPU(s): {hosts.hw_dict['CPU(s)']} Ram: {hosts.hw_dict['Ram']} Disk: {hosts.hw_dict['Disk']} Kernel: {hosts.hw_dict['Kernel']} O/S: {hosts.hw_dict['Operating System']}")
+    print(rhel8_beefy)
