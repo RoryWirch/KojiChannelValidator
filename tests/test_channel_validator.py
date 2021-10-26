@@ -124,7 +124,6 @@ class MockSession:
         }
         return build_dict[build_id]
 
-
     @staticmethod
     def requests_get(url):
         """
@@ -232,7 +231,7 @@ def test_config_checker(test_channel_with_hosts):
 @pytest.fixture
 def test_channel_with_hosts():
     """
-    Sets up a test channel with hosts for config checking 
+    Sets up a test channel with hosts for config checking
     """
     test_channel = cv.channel(name="dummy-rhel8", id=21)
 
@@ -247,13 +246,13 @@ def test_channel_with_hosts():
                 cur_yml["id"],
                 cur_yml["enabled"],
                 cur_yml["arches"],
-                cur_yml["description"])
+                cur_yml["description"],
+            )
             for key in tmp_host.hw_dict:
                 tmp_host.hw_dict[key] = cur_yml[key]
             test_channel.host_list.append(tmp_host)
-    
-    return test_channel
 
+    return test_channel
 
 
 @pytest.fixture
