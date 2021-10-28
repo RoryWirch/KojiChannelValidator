@@ -198,13 +198,7 @@ def test_collect_channels():
     assert len(channel_list) == 37
 
 
-def test_get_hw_info(test_host_with_build, monkeypatch):
-    """
-    Tests for functioning of collect_hw_info function
-    """
-    def fake_request(url):
-        
-        class FakeResponse:
+class FakeResponse:
             """ Class to fake response """
             def __init__(self, url):
                 resp_dict = {
@@ -217,9 +211,20 @@ def test_get_hw_info(test_host_with_build, monkeypatch):
 
                 self.text = resp_dict[url]
 
+
+@pytest.fixture
+def fake_request(monkeypatch):
+    """ """
+    def fake_get(url):
         return FakeResponse(url)
 
+    monkeypatch.setattr(requests, "get", fake_get)
 
+
+def test_get_hw_info(test_host_with_build, fake_request, monkeypatch):
+    """
+    Tests for functioning of collect_hw_info function
+    """
     expected = {
         "arches": ["ppc","ppc64le"],
         "CPU(s)": 8,
@@ -228,11 +233,7 @@ def test_get_hw_info(test_host_with_build, monkeypatch):
         "Kernel": "4.18.0-193.28.1.el8_2.ppc64le",
         "Operating System": "RedHat 8.2",
     }
-
-    monkeypatch.setattr(requests, "get", fake_request)
-
     my_host = test_host_with_build
-
     my_host.get_hw_info(MockSession())
 
     assert my_host.hw_dict == expected
