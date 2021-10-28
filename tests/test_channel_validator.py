@@ -148,47 +148,6 @@ class MockSession:
         return "CPU info:\nArchitecture:        ppc64le\nByte Order:          Little Endian\nCPU(s):              8\nOn-line CPU(s) list: 0-7\nThread(s) per core:  1\nCore(s) per socket:  8\nSocket(s):           1\nNUMA node(s):        1\nModel:               2.1 (pvr 004b 0201)\nModel name:          POWER8 (architected), altivec supported\nHypervisor vendor:   KVM\nVirtualization type: para\nL1d cache:           64K\nL1i cache:           32K\nNUMA node0 CPU(s):   0-7\n\n\nMemory:\n              total        used        free      shared  buff/cache   available\nMem:       24050560     1062144    16829376      158912     6159040    22675264\nSwap:      15744960       64000    15680960\n\n\nStorage:\nFilesystem             Size  Used Avail Use% Mounted on\n/dev/mapper/rhel-root  198G  6.3G  192G   4% /\n"
 
 
-# @pytest.fixture
-# def mock_session_response(monkeypatch):
-#     """
-#     Mocked responses for brew session for testing
-#     """
-
-#     def mock_list_channels(*args, **kwargs):
-#         """
-#         Covers default response of session.listChannels()
-#         """
-#         mockSession = MockSession()
-#         return mockSession.list_channels()
-
-#     def mock_get_build(build_id):
-#         """
-#         Covers session.getBuild
-#         """
-#         mockSession = MockSession()
-#         return mockSession.get_build(build_id)
-
-#     def mock_get_build_logs(build_id):
-#         """
-#         Covers session.getBuildLogs
-#         """
-#         mockSession = MockSession()
-#         return mockSession.get_build_logs(build_id)
-
-#     def mock_request_get(url):
-#         """
-#         Covers request.get("url")
-#         """
-#         # mockSession = MockSession()
-#         # return mockSession.requests_get(url)
-#         return FakeRequest()
-
-#     monkeypatch.setattr(session, "listChannels", mock_list_channels)
-#     monkeypatch.setattr(session, "getBuild", mock_get_build)
-#     monkeypatch.setattr(session, "getBuildLogs", mock_get_build_logs)
-#     monkeypatch.setattr(requests, "get", mock_request_get)
-
-
 def test_collect_channels():
     """
     Tests for functioning of collect_channels function
