@@ -6,19 +6,6 @@ import requests
 import yaml
 import channel_validator as cv
 
-# Session object for use in monkeypatching
-mykoji = koji.get_profile_module("brew")
-opts = vars(mykoji.config)
-session = mykoji.ClientSession(mykoji.config.server, opts)
-
-
-@pytest.fixture(autouse=True)
-def del_session_requests(monkeypatch):
-    """
-    Delete rsession attr from session to avoid brew API calls
-    """
-    monkeypatch.delattr(session, "rsession")
-
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_DIR = os.path.join(TESTS_DIR, "fixtures")
