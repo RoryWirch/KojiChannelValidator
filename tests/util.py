@@ -1,10 +1,5 @@
 import json
 import os
-import pytest
-import koji
-import requests
-import yaml
-import channel_validator as cv
 
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))

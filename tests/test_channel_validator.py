@@ -158,315 +158,241 @@ def host_94_list_host():
     }
 
 
-@pytest.fixture
-def mock_get_build_dict():
-    """
-    Returns a dictionary of buildID: build info for the mock_get_build function
-    """
-    build_dict = {
-        "1753791": {
-            "build_id": 1753791,
-            "cg_id": None,
-            "cg_name": None,
-            "completion_time": "2021-10-07 07:45:39.428208",
-            "completion_ts": 1633592739.42821,
-            "creation_event_id": 41409357,
-            "creation_time": "2021-10-07 07:44:02.519423",
-            "creation_ts": 1633592642.51942,
-            "epoch": None,
-            "extra": {
-                "source": {
-                    "original_url": "git://pkgs.devel.redhat.com/rpms/convert2rhel#293d829cb317d77c2a4b72dcbb9f39455e604e76"
-                }
-            },
-            "id": 1753791,
-            "name": "convert2rhel",
-            "nvr": "convert2rhel-0.24-2.el6",
-            "owner_id": 3367,
-            "owner_name": "mbocek",
-            "package_id": 79515,
-            "package_name": "convert2rhel",
-            "release": "2.el6",
-            "source": "git://pkgs.devel.redhat.com/rpms/convert2rhel#293d829cb317d77c2a4b72dcbb9f39455e604e76",
-            "start_time": "2021-10-07 07:44:02.511531",
-            "start_ts": 1633592642.51153,
-            "state": 1,
-            "task_id": 40191207,
-            "version": "0.24",
-            "volume_id": 7,
-            "volume_name": "rhel-6",
-        },
-        "1757570": {
-            "build_id": 1757570,
-            "cg_id": None,
-            "cg_name": None,
-            "completion_time": "2021-10-11 18:33:52.018836",
-            "completion_ts": 1633977232.01884,
-            "creation_event_id": 41464043,
-            "creation_time": "2021-10-11 18:30:42.450638",
-            "creation_ts": 1633977042.45064,
-            "epoch": None,
-            "extra": {
-                "source": {
-                    "original_url": "git://pkgs.devel.redhat.com/rpms/e2e-module-test?#0fb8c7868015e81b4ef62168cb0a71ce70f7dd2b"
-                }
-            },
-            "id": 1757570,
-            "name": "e2e-module-test",
-            "nvr": "e2e-module-test-1.0.4127-1.module+e2e+12941+acfc830c",
-            "owner_id": 4066,
-            "owner_name": "mbs",
-            "package_id": 71581,
-            "package_name": "e2e-module-test",
-            "release": "1.module+e2e+12941+acfc830c",
-            "source": "git://pkgs.devel.redhat.com/rpms/e2e-module-test#0fb8c7868015e81b4ef62168cb0a71ce70f7dd2b",
-            "start_time": "2021-10-11 18:30:42.443708",
-            "start_ts": 1633977042.44371,
-            "state": 1,
-            "task_id": 40263155,
-            "version": "1.0.4127",
-            "volume_id": 9,
-            "volume_name": "rhel-8",
-        },
-    }
-    return build_dict
+# @pytest.fixture
+# def mock_get_build_logs_dict():
+#     """
+#     returns a dict of {buildID : [build logs]} for the mock_get_build_logs function
+#     """
+#     log_dict = {
+#         "1753791": [
+#             {
+#                 "dir": "noarch",
+#                 "name": "state.log",
+#                 "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/state.log",
+#             },
+#             {
+#                 "dir": "noarch",
+#                 "name": "build.log",
+#                 "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/build.log",
+#             },
+#             {
+#                 "dir": "noarch",
+#                 "name": "root.log",
+#                 "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/root.log",
+#             },
+#             {
+#                 "dir": "noarch",
+#                 "name": "mock_output.log",
+#                 "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/mock_output.log",
+#             },
+#             {
+#                 "dir": "noarch",
+#                 "name": "noarch_rpmdiff.json",
+#                 "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/noarch_rpmdiff.json",
+#             },
+#         ],
+#         "1757570": [
+#             {
+#                 "dir": "aarch64",
+#                 "name": "hw_info.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/hw_info.log",
+#             },
+#             {
+#                 "dir": "aarch64",
+#                 "name": "state.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/state.log",
+#             },
+#             {
+#                 "dir": "aarch64",
+#                 "name": "build.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/build.log",
+#             },
+#             {
+#                 "dir": "aarch64",
+#                 "name": "root.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/root.log",
+#             },
+#             {
+#                 "dir": "aarch64",
+#                 "name": "installed_pkgs.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/installed_pkgs.log",
+#             },
+#             {
+#                 "dir": "aarch64",
+#                 "name": "mock_output.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/mock_output.log",
+#             },
+#             {
+#                 "dir": "i686",
+#                 "name": "hw_info.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/hw_info.log",
+#             },
+#             {
+#                 "dir": "i686",
+#                 "name": "state.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/state.log",
+#             },
+#             {
+#                 "dir": "i686",
+#                 "name": "build.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/build.log",
+#             },
+#             {
+#                 "dir": "i686",
+#                 "name": "root.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/root.log",
+#             },
+#             {
+#                 "dir": "i686",
+#                 "name": "installed_pkgs.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/installed_pkgs.log",
+#             },
+#             {
+#                 "dir": "i686",
+#                 "name": "mock_output.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/mock_output.log",
+#             },
+#             {
+#                 "dir": "ppc64le",
+#                 "name": "hw_info.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/hw_info.log",
+#             },
+#             {
+#                 "dir": "ppc64le",
+#                 "name": "state.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/state.log",
+#             },
+#             {
+#                 "dir": "ppc64le",
+#                 "name": "build.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/build.log",
+#             },
+#             {
+#                 "dir": "ppc64le",
+#                 "name": "root.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/root.log",
+#             },
+#             {
+#                 "dir": "ppc64le",
+#                 "name": "installed_pkgs.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/installed_pkgs.log",
+#             },
+#             {
+#                 "dir": "ppc64le",
+#                 "name": "mock_output.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/mock_output.log",
+#             },
+#             {
+#                 "dir": "s390x",
+#                 "name": "hw_info.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/hw_info.log",
+#             },
+#             {
+#                 "dir": "s390x",
+#                 "name": "state.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/state.log",
+#             },
+#             {
+#                 "dir": "s390x",
+#                 "name": "build.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/build.log",
+#             },
+#             {
+#                 "dir": "s390x",
+#                 "name": "root.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/root.log",
+#             },
+#             {
+#                 "dir": "s390x",
+#                 "name": "installed_pkgs.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/installed_pkgs.log",
+#             },
+#             {
+#                 "dir": "s390x",
+#                 "name": "mock_output.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/mock_output.log",
+#             },
+#             {
+#                 "dir": "x86_64",
+#                 "name": "hw_info.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/hw_info.log",
+#             },
+#             {
+#                 "dir": "x86_64",
+#                 "name": "state.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/state.log",
+#             },
+#             {
+#                 "dir": "x86_64",
+#                 "name": "build.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/build.log",
+#             },
+#             {
+#                 "dir": "x86_64",
+#                 "name": "root.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/root.log",
+#             },
+#             {
+#                 "dir": "x86_64",
+#                 "name": "installed_pkgs.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/installed_pkgs.log",
+#             },
+#             {
+#                 "dir": "x86_64",
+#                 "name": "mock_output.log",
+#                 "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/mock_output.log",
+#             },
+#         ],
+#     }
+#     return log_dict
 
 
-@pytest.fixture
-def mock_get_build_logs_dict():
-    """
-    returns a dict of {buildID : [build logs]} for the mock_get_build_logs function
-    """
-    log_dict = {
-        "1753791": [
-            {
-                "dir": "noarch",
-                "name": "state.log",
-                "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/state.log",
-            },
-            {
-                "dir": "noarch",
-                "name": "build.log",
-                "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/build.log",
-            },
-            {
-                "dir": "noarch",
-                "name": "root.log",
-                "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/root.log",
-            },
-            {
-                "dir": "noarch",
-                "name": "mock_output.log",
-                "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/mock_output.log",
-            },
-            {
-                "dir": "noarch",
-                "name": "noarch_rpmdiff.json",
-                "path": "vol/rhel-6/packages/convert2rhel/0.24/2.el6/data/logs/noarch/noarch_rpmdiff.json",
-            },
-        ],
-        "1757570": [
-            {
-                "dir": "aarch64",
-                "name": "hw_info.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/hw_info.log",
-            },
-            {
-                "dir": "aarch64",
-                "name": "state.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/state.log",
-            },
-            {
-                "dir": "aarch64",
-                "name": "build.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/build.log",
-            },
-            {
-                "dir": "aarch64",
-                "name": "root.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/root.log",
-            },
-            {
-                "dir": "aarch64",
-                "name": "installed_pkgs.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/installed_pkgs.log",
-            },
-            {
-                "dir": "aarch64",
-                "name": "mock_output.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/aarch64/mock_output.log",
-            },
-            {
-                "dir": "i686",
-                "name": "hw_info.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/hw_info.log",
-            },
-            {
-                "dir": "i686",
-                "name": "state.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/state.log",
-            },
-            {
-                "dir": "i686",
-                "name": "build.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/build.log",
-            },
-            {
-                "dir": "i686",
-                "name": "root.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/root.log",
-            },
-            {
-                "dir": "i686",
-                "name": "installed_pkgs.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/installed_pkgs.log",
-            },
-            {
-                "dir": "i686",
-                "name": "mock_output.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/i686/mock_output.log",
-            },
-            {
-                "dir": "ppc64le",
-                "name": "hw_info.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/hw_info.log",
-            },
-            {
-                "dir": "ppc64le",
-                "name": "state.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/state.log",
-            },
-            {
-                "dir": "ppc64le",
-                "name": "build.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/build.log",
-            },
-            {
-                "dir": "ppc64le",
-                "name": "root.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/root.log",
-            },
-            {
-                "dir": "ppc64le",
-                "name": "installed_pkgs.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/installed_pkgs.log",
-            },
-            {
-                "dir": "ppc64le",
-                "name": "mock_output.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/ppc64le/mock_output.log",
-            },
-            {
-                "dir": "s390x",
-                "name": "hw_info.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/hw_info.log",
-            },
-            {
-                "dir": "s390x",
-                "name": "state.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/state.log",
-            },
-            {
-                "dir": "s390x",
-                "name": "build.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/build.log",
-            },
-            {
-                "dir": "s390x",
-                "name": "root.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/root.log",
-            },
-            {
-                "dir": "s390x",
-                "name": "installed_pkgs.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/installed_pkgs.log",
-            },
-            {
-                "dir": "s390x",
-                "name": "mock_output.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/s390x/mock_output.log",
-            },
-            {
-                "dir": "x86_64",
-                "name": "hw_info.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/hw_info.log",
-            },
-            {
-                "dir": "x86_64",
-                "name": "state.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/state.log",
-            },
-            {
-                "dir": "x86_64",
-                "name": "build.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/build.log",
-            },
-            {
-                "dir": "x86_64",
-                "name": "root.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/root.log",
-            },
-            {
-                "dir": "x86_64",
-                "name": "installed_pkgs.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/installed_pkgs.log",
-            },
-            {
-                "dir": "x86_64",
-                "name": "mock_output.log",
-                "path": "vol/rhel-8/packages/e2e-module-test/1.0.4127/1.module+e2e+12941+acfc830c/data/logs/x86_64/mock_output.log",
-            },
-        ],
-    }
-    return log_dict
-
-
-@pytest.fixture
-def test_list_task_data():
-    return [
-        {
-            "arch": "i386",
-            "awaited": False,
-            "channel_id": 26,
-            "completion_time": "2021-06-15 11:05:53.245114",
-            "completion_ts": 1623755153.24511,
-            "create_time": "2021-06-15 11:03:15.121289",
-            "create_ts": 1623754995.12129,
-            "host_id": 280,
-            "id": 37493015,
-            "label": "i686",
-            "method": "buildArch",
-            "owner": 4132,
-            "owner_name": "crecklin",
-            "owner_type": 0,
-            "parent": 37492841,
-            "priority": 19,
-            "request": [
-                "tasks/2847/37492847/kernel-3.10.0-1160.32.1.el7.1964556.test.cki.src.rpm",
-                67194,
-                "i686",
-                False,
-                {"repo_id": 5081187},
-            ],
-            "result": [
-                {
-                    "brootid": 7490808,
-                    "logs": [
-                        "tasks/3015/37493015/build.log",
-                        "tasks/3015/37493015/root.log",
-                        "tasks/3015/37493015/state.log",
-                        "tasks/3015/37493015/mock_output.log",
-                    ],
-                    "rpms": [
-                        "tasks/3015/37493015/kernel-headers-3.10.0-1160.32.1.el7.1964556.test.cki.i686.rpm"
-                    ],
-                    "srpms": [],
-                }
-            ],
-            "start_time": "2021-06-15 11:04:02.183543",
-            "start_ts": 1623755042.18354,
-            "state": 2,
-            "waiting": None,
-            "weight": 2.5,
-        }
-    ]
+# @pytest.fixture
+# def test_list_task_data():
+#     return [
+#         {
+#             "arch": "i386",
+#             "awaited": False,
+#             "channel_id": 26,
+#             "completion_time": "2021-06-15 11:05:53.245114",
+#             "completion_ts": 1623755153.24511,
+#             "create_time": "2021-06-15 11:03:15.121289",
+#             "create_ts": 1623754995.12129,
+#             "host_id": 280,
+#             "id": 37493015,
+#             "label": "i686",
+#             "method": "buildArch",
+#             "owner": 4132,
+#             "owner_name": "crecklin",
+#             "owner_type": 0,
+#             "parent": 37492841,
+#             "priority": 19,
+#             "request": [
+#                 "tasks/2847/37492847/kernel-3.10.0-1160.32.1.el7.1964556.test.cki.src.rpm",
+#                 67194,
+#                 "i686",
+#                 False,
+#                 {"repo_id": 5081187},
+#             ],
+#             "result": [
+#                 {
+#                     "brootid": 7490808,
+#                     "logs": [
+#                         "tasks/3015/37493015/build.log",
+#                         "tasks/3015/37493015/root.log",
+#                         "tasks/3015/37493015/state.log",
+#                         "tasks/3015/37493015/mock_output.log",
+#                     ],
+#                     "rpms": [
+#                         "tasks/3015/37493015/kernel-headers-3.10.0-1160.32.1.el7.1964556.test.cki.i686.rpm"
+#                     ],
+#                     "srpms": [],
+#                 }
+#             ],
+#             "start_time": "2021-06-15 11:04:02.183543",
+#             "start_ts": 1623755042.18354,
+#             "state": 2,
+#             "waiting": None,
+#             "weight": 2.5,
+#         }
+#     ]
