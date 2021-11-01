@@ -129,7 +129,7 @@ def test_collect_channels():
     assert len(channel_list) == 37
 
 
-def test_get_hw_info(test_host_with_build, fake_request, monkeypatch):
+def test_get_hw_info(test_host_with_build, fake_request):
     """
     Tests for functioning of collect_hw_info function
     """
