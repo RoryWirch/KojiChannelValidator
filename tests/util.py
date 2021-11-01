@@ -31,6 +31,7 @@ class FakeCall:
             print("koji call %s ... --json-output > %s" % (self.name, fixture))
             raise
 
+
 class FakeResponse:
     """Class to fake response"""
 

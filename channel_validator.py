@@ -95,7 +95,6 @@ class host:
                 if line_split[0] in hw_keys:
                     self.hw_dict[line_split[0]] = line_split[1]
 
-
     def __str__(self):
         """
         Returns a string for the host object
