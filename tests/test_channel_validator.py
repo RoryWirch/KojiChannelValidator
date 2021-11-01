@@ -20,7 +20,7 @@ class MockSession:
     def __getattr__(self, name):
         return FakeCall(name)
 
-   
+
 def test_collect_channels():
     """
     Tests for functioning of collect_channels function
