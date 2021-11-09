@@ -63,7 +63,6 @@ class channel:
             new_grouping = [hosts[i]]
             grouped_set.add(hosts[i])
             for j in range(i + 1, len(hosts)):
-                # if any(hosts[j] in sl for sl in config_groupings):
                 if hosts[j] in grouped_set:
                     continue
                 if compare_hosts(hosts[i], hosts[j]):
@@ -71,7 +70,6 @@ class channel:
                     grouped_set.add(hosts[j])
             config_groupings.append(new_grouping)
 
-        print(config_groupings)
         self.config_groups = config_groupings
 
 
@@ -96,8 +94,6 @@ class host:
                 line_split = lines.split(": ")
                 if line_split[0] in hw_keys:
                     self.hw_dict[line_split[0]] = line_split[1]
-        else:
-            print(f"NoneType desc found for {self.id}")
 
     def __str__(self):
         """
