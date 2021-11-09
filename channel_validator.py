@@ -299,7 +299,7 @@ if __name__ == "__main__":
     )
     for index, sub_list in enumerate(rhel8_beefy.config_groups):
         print(
-            f"\n================================ Group {index}/{len(rhel8_beefy.config_groups)} ================================"
+            f"\n================================ Group {index+1}/{len(rhel8_beefy.config_groups)} ================================"
         )
         for hosts in sub_list:
             print(
