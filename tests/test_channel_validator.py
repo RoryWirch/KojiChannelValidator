@@ -1,6 +1,6 @@
 import pytest
 import requests
-#import yaml
+import yaml
 import channel_validator as cv
 from tests.util import FakeCall
 from tests.util import FakeResponse
