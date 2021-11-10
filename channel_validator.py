@@ -7,7 +7,7 @@ from datetime import datetime
 from pprint import pprint
 
 
-class channel:
+class Channel:
     """
     Brew build channel
     """
@@ -39,7 +39,7 @@ class channel:
 
         for hosts in list_host_response:
             self.host_list.append(
-                host(
+                Host(
                     name=hosts["name"],
                     id=hosts["id"],
                     enabled=hosts["enabled"],
@@ -73,7 +73,7 @@ class channel:
         self.config_groups = config_groupings
 
 
-class host:
+class Host:
     """
     Brew build host
     """
@@ -145,7 +145,7 @@ class host:
                 build = session.listBuilds(taskID=parent_id)
                 if len(build) != 0:
                     self.task_list.append(
-                        task(
+                        Task(
                             task_id=brew_task["id"],
                             parent_id=brew_task["parent"],
                             build_info=build[0],
@@ -154,7 +154,7 @@ class host:
                     break
         else:
             self.task_list.append(
-                task(
+                Task(
                     task_id=tasks[0]["id"],
                     parent_id=tasks[0]["parent"],
                     build_info=build[0],
@@ -222,7 +222,7 @@ class host:
         return True
 
 
-class task:
+class Task:
     """
     Brew task
     """
@@ -270,7 +270,7 @@ def collect_channels(session):
     brew_channels = session.listChannels()
 
     for brew_channel in brew_channels:
-        channel_objects.append(channel(brew_channel["name"], brew_channel["id"]))
+        channel_objects.append(Channel(brew_channel["name"], brew_channel["id"]))
 
     return channel_objects
 
@@ -283,7 +283,7 @@ if __name__ == "__main__":
 
     channel_name = "rhel8-beefy"
     channel_info = session.getChannel(channel_name)
-    rhel8_beefy = channel(channel_info["name"], channel_info["id"])
+    rhel8_beefy = Channel(channel_info["name"], channel_info["id"])
 
     rhel8_beefy.collect_hosts(session)
 

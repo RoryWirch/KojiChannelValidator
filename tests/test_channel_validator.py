@@ -65,7 +65,7 @@ def test_channel_with_hosts():
     """
     Sets up a test channel with hosts for config checking
     """
-    test_channel = cv.channel(name="dummy-rhel8", id=21)
+    test_channel = cv.Channel(name="dummy-rhel8", id=21)
 
     # set up hosts for the channel. Host data is loaded from .yml
     with open("tests/fixtures/hosts/hosts.yml", "r") as fp:
@@ -73,7 +73,7 @@ def test_channel_with_hosts():
 
         for hosts in host_yml:
             cur_yml = host_yml[hosts]
-            tmp_host = cv.host(
+            tmp_host = cv.Host(
                 cur_yml["Name"],
                 cur_yml["id"],
                 cur_yml["enabled"],
@@ -92,7 +92,7 @@ def test_host_with_build(host_94_list_host):
     """
     Sets up host to mock host 94 for testing.
     """
-    test_task = cv.task(
+    test_task = cv.Task(
         task_id=40263182,
         parent_id=40263155,
         build_info={
@@ -125,7 +125,7 @@ def test_host_with_build(host_94_list_host):
             "volume_name": "rhel-8",
         },
     )
-    test_host = cv.host(
+    test_host = cv.Host(
         "rhel8", 94, True, host_94_list_host["arches"], host_94_list_host["description"]
     )
     test_host.task_list.append(test_task)
