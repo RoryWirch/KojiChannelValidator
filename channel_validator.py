@@ -281,9 +281,10 @@ if __name__ == "__main__":
     opts = vars(mykoji.config)
     session = mykoji.ClientSession(mykoji.config.server, opts)
 
-    channels = collect_channels(session)
+    channel_name = "rhel8-beefy"
+    channel_info = session.getChannel(channel_name)
+    rhel8_beefy = channel(channel_info["name"], channel_info["id"])
 
-    rhel8_beefy = channels[30]
     rhel8_beefy.collect_hosts(session)
 
     for hosts in rhel8_beefy.host_list:
@@ -305,4 +306,3 @@ if __name__ == "__main__":
             print(
                 f"ID: {hosts.id} arches: {hosts.hw_dict['arches']} CPU(s): {hosts.hw_dict['CPU(s)']} Ram: {hosts.hw_dict['Ram']} Disk: {hosts.hw_dict['Disk']} Kernel: {hosts.hw_dict['Kernel']} O/S: {hosts.hw_dict['Operating System']}"
             )
-    print(rhel8_beefy)
