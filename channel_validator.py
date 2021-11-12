@@ -284,7 +284,6 @@ if __name__ == "__main__":
     channel_name = "rhel8-beefy"
     channel_info = session.getChannel(channel_name)
     rhel8_beefy = Channel(channel_info["name"], channel_info["id"])
-
     rhel8_beefy.collect_hosts(session)
 
     for hosts in rhel8_beefy.host_list:
