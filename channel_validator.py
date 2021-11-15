@@ -82,14 +82,18 @@ class Channel:
             for host in group:
                 try:
                     if host.hw_dict["CPU(s)"] < self.min_cpus:
-                        print(f"in is_valid host: {host.id} has {host.hw_dict['CPU(s)']} CPU(s)")
+                        print(
+                            f"in is_valid host: {host.id} has {host.hw_dict['CPU(s)']} CPU(s)"
+                        )
                         flag = False
                 except TypeError:
-                    print(f"TypeError while checking CPU(s) of host: {host.id}\n Cannot compare {type(host.hw_dict['CPU(s)'])} to Int")
+                    print(
+                        f"TypeError while checking CPU(s) of host: {host.id}\n Cannot compare {type(host.hw_dict['CPU(s)'])} to Int"
+                    )
                     flag = False
 
         return flag
-                
+
 
 class Host:
     """
@@ -313,7 +317,7 @@ if __name__ == "__main__":
 
     if rhel8_beefy.is_valid():
         exit(0)
-    
+
     print(f"rhel8_beefy contains {len(rhel8_beefy.host_list)} hosts")
     print(
         f"rhel8_beefy was divided in to {len(rhel8_beefy.config_groups)} configuration groups based on CPU count and Ram"
