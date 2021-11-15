@@ -12,11 +12,12 @@ class Channel:
     Brew build channel
     """
 
-    def __init__(self, name, id):
+    def __init__(self, name, id, cpus=8):
         self.name = str(name)
         self.id = int(id)
         self.host_list = []
         self.config_groups = []
+        self.min_cpus = cpus
 
     def __str__(self):
         """
@@ -72,6 +73,23 @@ class Channel:
 
         self.config_groups = config_groupings
 
+    def is_valid(self):
+        """
+        Checks that all hosts in self.config_groups has a valid cpu count
+        """
+        flag = True
+        for group in self.config_groups:
+            for host in group:
+                try:
+                    if host.hw_dict["CPU(s)"] < self.min_cpus:
+                        print(f"in is_valid host: {host.id} has {host.hw_dict['CPU(s)']} CPU(s)")
+                        flag = False
+                except TypeError:
+                    print(f"TypeError while checking CPU(s) of host: {host.id}\n Cannot compare {type(host.hw_dict['CPU(s)'])} to Int")
+                    flag = False
+
+        return flag
+                
 
 class Host:
     """
@@ -293,6 +311,9 @@ if __name__ == "__main__":
 
     rhel8_beefy.config_check()
 
+    if rhel8_beefy.is_valid():
+        exit(0)
+    
     print(f"rhel8_beefy contains {len(rhel8_beefy.host_list)} hosts")
     print(
         f"rhel8_beefy was divided in to {len(rhel8_beefy.config_groups)} configuration groups based on CPU count and Ram"
@@ -305,3 +326,5 @@ if __name__ == "__main__":
             print(
                 f"ID: {hosts.id} arches: {hosts.hw_dict['arches']} CPU(s): {hosts.hw_dict['CPU(s)']} Ram: {hosts.hw_dict['Ram']} Disk: {hosts.hw_dict['Disk']} Kernel: {hosts.hw_dict['Kernel']} O/S: {hosts.hw_dict['Operating System']}"
             )
+
+    exit(1)
