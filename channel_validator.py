@@ -83,7 +83,7 @@ class Channel:
                 try:
                     if host.hw_dict["CPU(s)"] < self.min_cpus:
                         print(
-                            f"in is_valid host: {host.id} has {host.hw_dict['CPU(s)']} CPU(s)" # draw attention to valid hosts with less than 8 (minimum) CPUs 
+                            f"in is_valid host: {host.id} has {host.hw_dict['CPU(s)']} CPU(s)"  # draw attention to valid hosts with less than 8 (minimum) CPUs
                         )
                         flag = False
                 except TypeError:
