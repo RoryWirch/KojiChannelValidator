@@ -7,16 +7,17 @@ from datetime import datetime
 from pprint import pprint
 
 
-class channel:
+class Channel:
     """
     Brew build channel
     """
 
-    def __init__(self, name, id):
+    def __init__(self, name, id, cpus=8):
         self.name = str(name)
         self.id = int(id)
         self.host_list = []
         self.config_groups = []
+        self.min_cpus = cpus
 
     def __str__(self):
         """
@@ -39,7 +40,7 @@ class channel:
 
         for hosts in list_host_response:
             self.host_list.append(
-                host(
+                Host(
                     name=hosts["name"],
                     id=hosts["id"],
                     enabled=hosts["enabled"],
@@ -72,8 +73,29 @@ class channel:
 
         self.config_groups = config_groupings
 
+    def is_valid(self):
+        """
+        Checks that all hosts in self.config_groups has a valid cpu count
+        """
+        flag = True
+        for group in self.config_groups:
+            for host in group:
+                try:
+                    if host.hw_dict["CPU(s)"] < self.min_cpus:
+                        print(
+                            f"in is_valid host: {host.id} has {host.hw_dict['CPU(s)']} CPU(s)"  # draw attention to valid hosts with less than 8 (minimum) CPUs
+                        )
+                        flag = False
+                except TypeError:
+                    print(
+                        f"TypeError while checking CPU(s) of host: {host.id}\n Cannot compare {type(host.hw_dict['CPU(s)'])} to Int"
+                    )
+                    flag = False
 
-class host:
+        return flag
+
+
+class Host:
     """
     Brew build host
     """
@@ -145,7 +167,7 @@ class host:
                 build = session.listBuilds(taskID=parent_id)
                 if len(build) != 0:
                     self.task_list.append(
-                        task(
+                        Task(
                             task_id=brew_task["id"],
                             parent_id=brew_task["parent"],
                             build_info=build[0],
@@ -154,7 +176,7 @@ class host:
                     break
         else:
             self.task_list.append(
-                task(
+                Task(
                     task_id=tasks[0]["id"],
                     parent_id=tasks[0]["parent"],
                     build_info=build[0],
@@ -222,7 +244,7 @@ class host:
         return True
 
 
-class task:
+class Task:
     """
     Brew task
     """
@@ -270,7 +292,7 @@ def collect_channels(session):
     brew_channels = session.listChannels()
 
     for brew_channel in brew_channels:
-        channel_objects.append(channel(brew_channel["name"], brew_channel["id"]))
+        channel_objects.append(Channel(brew_channel["name"], brew_channel["id"]))
 
     return channel_objects
 
@@ -283,8 +305,7 @@ if __name__ == "__main__":
 
     channel_name = "rhel8-beefy"
     channel_info = session.getChannel(channel_name)
-    rhel8_beefy = channel(channel_info["name"], channel_info["id"])
-
+    rhel8_beefy = Channel(channel_info["name"], channel_info["id"])
     rhel8_beefy.collect_hosts(session)
 
     for hosts in rhel8_beefy.host_list:
@@ -306,3 +327,8 @@ if __name__ == "__main__":
             print(
                 f"ID: {hosts.id} arches: {hosts.hw_dict['arches']} CPU(s): {hosts.hw_dict['CPU(s)']} Ram: {hosts.hw_dict['Ram']} Disk: {hosts.hw_dict['Disk']} Kernel: {hosts.hw_dict['Kernel']} O/S: {hosts.hw_dict['Operating System']}"
             )
+
+    if rhel8_beefy.is_valid():
+        exit(0)
+
+    exit(1)
