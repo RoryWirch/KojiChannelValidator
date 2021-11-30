@@ -16,7 +16,7 @@ def fake_request(monkeypatch):
     monkeypatch.setattr(requests, "get", fake_get)
 
 
-class MockSession:
+class FakeSession:
     def __getattr__(self, name):
         return FakeCall(name)
 
@@ -25,7 +25,7 @@ def test_collect_channels():
     """
     Tests for functioning of collect_channels function
     """
-    channel_list = cv.collect_channels(MockSession())
+    channel_list = cv.collect_channels(FakeSession())
 
     assert len(channel_list) == 37
 
@@ -43,7 +43,7 @@ def test_get_hw_info(test_host_with_build, fake_request):
         "Operating System": "RedHat 8.2",
     }
     my_host = test_host_with_build
-    my_host.get_hw_info(MockSession())
+    my_host.get_hw_info(FakeSession())
 
     assert my_host.hw_dict == expected
 
