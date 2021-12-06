@@ -207,6 +207,9 @@ class Host:
             if log["name"] == "hw_info.log" and log["dir"] in self.hw_dict["arches"]:
                 hw_log = log
                 break
+            elif log["name"] == "hw_info.log" and log["dir"] == "noarch":
+                hw_log = log
+                break
 
         # Check if hw_logs has been assigned
         if hw_log == None:
