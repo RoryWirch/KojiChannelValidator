@@ -10,7 +10,7 @@ from pprint import pprint
 
 class Channel:
     """
-    Brew build channel
+    Koji build channel
     """
 
     def __init__(self, name, id, cpus=8):
@@ -101,7 +101,7 @@ class Channel:
 
 class Host:
     """
-    Brew build host
+    Koji build host
     """
 
     def __init__(self, name, id, enabled, arches, description):
@@ -164,16 +164,16 @@ class Host:
             queryOpts = {"limit": 10, "order": "-completion_time"}
 
             tasks = session.listTasks(opts, queryOpts)
-            for brew_task in tasks:
-                parent_id = brew_task["parent"]
+            for koji_task in tasks:
+                parent_id = koji_task["parent"]
 
                 build = session.listBuilds(taskID=parent_id)
                 if len(build) != 0:
                     logging.info("TASK FOUND. Task found for host: %s", self.id)
                     self.task_list.append(
                         Task(
-                            task_id=brew_task["id"],
-                            parent_id=brew_task["parent"],
+                            task_id=koji_task["id"],
+                            parent_id=koji_task["parent"],
                             build_info=build[0],
                         )
                     )
@@ -250,7 +250,7 @@ class Host:
 
 class Task:
     """
-    Brew task
+    Koji task
     """
 
     def __init__(self, task_id, parent_id, build_info):
@@ -287,16 +287,16 @@ def compare_hosts(hostA, hostB):
 
 def collect_channels(session):
     """
-    Collects brew channels from brew and creates
+    Collects koji channels from koji and creates
     objects for them
 
     returns a list of channel objects
     """
     channel_objects = []
-    brew_channels = session.listChannels()
+    koji_channels = session.listChannels()
 
-    for brew_channel in brew_channels:
-        channel_objects.append(Channel(brew_channel["name"], brew_channel["id"]))
+    for koji_channel in koji_channels:
+        channel_objects.append(Channel(koji_channel["name"], koji_channel["id"]))
 
     return channel_objects
 
