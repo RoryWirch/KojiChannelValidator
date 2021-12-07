@@ -139,7 +139,7 @@ class Host:
         """
         Tries to find a non scratch build for the host
         """
-        logging.info(f"Starting find_builds_for_host for host: {self.id}")
+        logging.info(f"\n===========================================================================\nStarting find_builds_for_host for host: {self.id}")
         opts = {
             "host_id": self.id,
             "method": "buildArch",
