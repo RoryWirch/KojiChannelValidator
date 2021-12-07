@@ -3,3 +3,4 @@ __pycache__
 ppc64le
 s390x
 x86_64
+logs
