@@ -2,7 +2,8 @@ import os
 import requests
 import koji
 import re
-import time
+import logging
+import argparse
 from datetime import datetime
 from pprint import pprint
 
@@ -82,13 +83,16 @@ class Channel:
             for host in group:
                 try:
                     if host.hw_dict["CPU(s)"] < self.min_cpus:
-                        print(
-                            f"in is_valid host: {host.id} has {host.hw_dict['CPU(s)']} CPU(s)"  # draw attention to valid hosts with less than 8 (minimum) CPUs
+                        logging.info(
+                            f'Host: {host.id} CPU(s): {host.hw_dict["CPU(s)"]} does not meet the minimum CPU count of {self.min_cpus}'
                         )
                         flag = False
                 except TypeError:
-                    print(
-                        f"TypeError while checking CPU(s) of host: {host.id}\n Cannot compare {type(host.hw_dict['CPU(s)'])} to Int"
+                    logging.error(
+                        f'TYPE ERROR Host: {host.id} CPU count "{type(host.hw_dict["CPU(s)"])}"cannot be compared to type Int'
+                    )
+                    logging.info(
+                        "Note that a CPU(s) value of None may mean a hw_info.log was not found for the host."
                     )
                     flag = False
 
@@ -135,9 +139,7 @@ class Host:
         """
         Tries to find a non scratch build for the host
         """
-        now = datetime.now()
-        cur_time = now.strftime("%H:%M:%S")
-        print(f"starting find_builds_for_host at {cur_time}")
+        logging.info(f"Starting find_builds_for_host for host: {self.id}")
         opts = {
             "host_id": self.id,
             "method": "buildArch",
@@ -150,6 +152,7 @@ class Host:
 
         # Don't add any tasks if none are found for the host
         if len(tasks) == 0:
+            logging.info("NO TASKS FOUND. No tasks found on host %s", self.id)
             return
 
         # Check build info for task and check for scratch build
@@ -166,6 +169,7 @@ class Host:
 
                 build = session.listBuilds(taskID=parent_id)
                 if len(build) != 0:
+                    logging.info("TASK FOUND. Task found for host: %s", self.id)
                     self.task_list.append(
                         Task(
                             task_id=koji_task["id"],
@@ -175,6 +179,7 @@ class Host:
                     )
                     break
         else:
+            logging.info("TASK FOUND. Task found for host %s", self.id)
             self.task_list.append(
                 Task(
                     task_id=tasks[0]["id"],
@@ -182,22 +187,20 @@ class Host:
                     build_info=build[0],
                 )
             )
-        now = datetime.now()
-        cur_time = now.strftime("%H:%M:%S")
-        print(f"end find_builds_for_host at {cur_time}")
+        logging.info(f"Successful return from find_builds_for_hosts")
 
     def get_hw_info(self, session):
         """
         Gets hardware information for a host. Downloads hw_info.log for the
         hosts architecture and pulls hardware information from the log.
         """
-        now = datetime.now()
-        cur_time = now.strftime("%H:%M:%S")
-        print(f"starting get_hw_info at {cur_time}")
+        logging.info(
+            f"Start get_hw_info for host {self.id} using task:\n\t{self.task_list[0]}"
+        )
         if len(self.task_list) == 0:
-            now = datetime.now()
-            cur_time = now.strftime("%H:%M:%S")
-            print(f"end find_builds_for_host(false) at {cur_time}")
+            logging.info(
+                f"No tasks found in the tasklist of host {self.id}. Unable to find hw_info log without a task"
+            )
             return False
 
         build_id = self.task_list[0].build_info["build_id"]
@@ -213,9 +216,9 @@ class Host:
 
         # Check if hw_logs has been assigned
         if hw_log == None:
-            now = datetime.now()
-            cur_time = now.strftime("%H:%M:%S")
-            print(f"end find_builds_for_host(false) at {cur_time}")
+            logging.info(
+                f"No hw_log found for host: {self.id} all logs for build: {all_logs}"
+            )
             return False
 
         # Make URL for hw_log and use requests.get(url) to download log
@@ -241,9 +244,7 @@ class Host:
                 self.hw_dict["Disk"] = line_split[1]
                 continue
 
-        now = datetime.now()
-        cur_time = now.strftime("%H:%M:%S")
-        print(f"end find_builds_for_host(true) at {cur_time}")
+        logging.info("Successful return from get_hw_info")
         return True
 
 
@@ -261,7 +262,7 @@ class Task:
         """
         Returns a string for a task object
         """
-        task_str = f"Task ID: {self.task_id}\nParent ID: {self.parent_id}\nBuild Info: {self.build_info}"
+        task_str = f"Task ID: {self.task_id}\n\tParent ID: {self.parent_id}\n\tBuild Info: {self.build_info}"
         return task_str
 
 
@@ -301,6 +302,19 @@ def collect_channels(session):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-l", "--log", action="store_true", help="Produces logging info for the tool"
+    )
+    args = parser.parse_args()
+
+    if args.log:
+        logging.basicConfig(
+            format="%(asctime)s %(levelname)-8s %(message)s",
+            level=logging.INFO,
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+
     mykoji = koji.get_profile_module("brew")
 
     opts = vars(mykoji.config)
@@ -314,7 +328,6 @@ if __name__ == "__main__":
     for hosts in rhel8_beefy.host_list:
         hosts.find_builds_for_host(session)
         hosts.get_hw_info(session)
-        print(f"collected host: {hosts.id}")
 
     rhel8_beefy.config_check()
 
