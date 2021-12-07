@@ -83,11 +83,17 @@ class Channel:
             for host in group:
                 try:
                     if host.hw_dict["CPU(s)"] < self.min_cpus:
-                        logging.info(f'Host: {host.id} CPU(s): {host.hw_dict["CPU(s)"]} does not meet the minimum CPU count of {self.min_cpus}')
+                        logging.info(
+                            f'Host: {host.id} CPU(s): {host.hw_dict["CPU(s)"]} does not meet the minimum CPU count of {self.min_cpus}'
+                        )
                         flag = False
                 except TypeError:
-                    logging.error(f'TYPE ERROR Host: {host.id} CPU count \"{type(host.hw_dict["CPU(s)"])}\"cannot be compared to type Int')
-                    logging.info('Note that a CPU(s) value of None may mean a hw_info.log was not found for the host.')
+                    logging.error(
+                        f'TYPE ERROR Host: {host.id} CPU count "{type(host.hw_dict["CPU(s)"])}"cannot be compared to type Int'
+                    )
+                    logging.info(
+                        "Note that a CPU(s) value of None may mean a hw_info.log was not found for the host."
+                    )
                     flag = False
 
         return flag
@@ -133,7 +139,7 @@ class Host:
         """
         Tries to find a non scratch build for the host
         """
-        logging.info(f'Starting find_builds_for_host for host: {self.id}')
+        logging.info(f"Starting find_builds_for_host for host: {self.id}")
         opts = {
             "host_id": self.id,
             "method": "buildArch",
@@ -146,7 +152,7 @@ class Host:
 
         # Don't add any tasks if none are found for the host
         if len(tasks) == 0:
-            logging.info('NO TASKS FOUND. No tasks found on host %s', self.id)
+            logging.info("NO TASKS FOUND. No tasks found on host %s", self.id)
             return
 
         # Check build info for task and check for scratch build
@@ -163,7 +169,7 @@ class Host:
 
                 build = session.listBuilds(taskID=parent_id)
                 if len(build) != 0:
-                    logging.info('TASK FOUND. Task found for host: %s', self.id)
+                    logging.info("TASK FOUND. Task found for host: %s", self.id)
                     self.task_list.append(
                         Task(
                             task_id=brew_task["id"],
@@ -173,7 +179,7 @@ class Host:
                     )
                     break
         else:
-            logging.info('TASK FOUND. Task found for host %s', self.id)
+            logging.info("TASK FOUND. Task found for host %s", self.id)
             self.task_list.append(
                 Task(
                     task_id=tasks[0]["id"],
@@ -181,20 +187,24 @@ class Host:
                     build_info=build[0],
                 )
             )
-        logging.info(f'Successful return from find_builds_for_hosts')
+        logging.info(f"Successful return from find_builds_for_hosts")
 
     def get_hw_info(self, session):
         """
         Gets hardware information for a host. Downloads hw_info.log for the
         hosts architecture and pulls hardware information from the log.
         """
-        logging.info(f'Start get_hw_info for host {self.id} using task:\n\t{self.task_list[0]}')
+        logging.info(
+            f"Start get_hw_info for host {self.id} using task:\n\t{self.task_list[0]}"
+        )
         if len(self.task_list) == 0:
-            logging.info(f'No tasks found in the tasklist of host {self.id}. Unable to find hw_info log without a task')
+            logging.info(
+                f"No tasks found in the tasklist of host {self.id}. Unable to find hw_info log without a task"
+            )
             return False
 
         build_id = self.task_list[0].build_info["build_id"]
-        all_logs = session.getBuildLogs(build_id) 
+        all_logs = session.getBuildLogs(build_id)
         hw_log = None
         for log in all_logs:
             if log["name"] == "hw_info.log" and log["dir"] in self.hw_dict["arches"]:
@@ -206,7 +216,9 @@ class Host:
 
         # Check if hw_logs has been assigned
         if hw_log == None:
-            logging.info(f'No hw_log found for host: {self.id} all logs for build: {all_logs}')
+            logging.info(
+                f"No hw_log found for host: {self.id} all logs for build: {all_logs}"
+            )
             return False
 
         # Make URL for hw_log and use requests.get(url) to download log
@@ -232,7 +244,7 @@ class Host:
                 self.hw_dict["Disk"] = line_split[1]
                 continue
 
-        logging.info('Successful return from get_hw_info')
+        logging.info("Successful return from get_hw_info")
         return True
 
 
@@ -298,10 +310,10 @@ if __name__ == "__main__":
 
     if args.log:
         logging.basicConfig(
-            format='%(asctime)s %(levelname)-8s %(message)s',
+            format="%(asctime)s %(levelname)-8s %(message)s",
             level=logging.INFO,
-            datefmt='%Y-%m-%d %H:%M:%S')
-
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
 
     mykoji = koji.get_profile_module("brew")
 
