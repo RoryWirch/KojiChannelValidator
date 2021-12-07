@@ -1,3 +1,8 @@
+This tool queries [Koji](https://docs.pagure.org/koji/) and ensures that every builder host in a channel has the same CPU and memory resources. It scrapes Mock's [hw-info logs](https://rpm-software-management.github.io/mock/Plugin-HwInfo) for recent `buildArch` tasks.
+
+The purpose of this tool is to identify system resource drift across many Koji builders.
+
+
 ## Installing on Linux
 Create a python virtual environments and then activate it:
 ```
