@@ -301,50 +301,44 @@ def collect_channels(session):
     return channel_objects
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-l", "--log", action="store_true", help="Produces logging info for the tool"
-    )
-    args = parser.parse_args()
-
+def check(args):
     if args.log:
         logging.basicConfig(
             format="%(asctime)s %(levelname)-8s %(message)s",
             level=logging.INFO,
             datefmt="%Y-%m-%d %H:%M:%S",
         )
+    channel_name = args.channel
 
     mykoji = koji.get_profile_module("brew")
 
     opts = vars(mykoji.config)
     session = mykoji.ClientSession(mykoji.config.server, opts)
 
-    channel_name = "rhel8-beefy"
     channel_info = session.getChannel(channel_name)
-    rhel8_beefy = Channel(channel_info["name"], channel_info["id"])
-    rhel8_beefy.collect_hosts(session)
+    mychannel = Channel(channel_info["name"], channel_info["id"])
+    mychannel.collect_hosts(session)
 
-    for hosts in rhel8_beefy.host_list:
+    for hosts in mychannel.host_list:
         hosts.find_builds_for_host(session)
         hosts.get_hw_info(session)
 
-    rhel8_beefy.config_check()
+    mychannel.config_check()
 
-    print(f"rhel8_beefy contains {len(rhel8_beefy.host_list)} hosts")
+    print(f"{mychannel.name} contains {len(mychannel.host_list)} hosts")
     print(
-        f"rhel8_beefy was divided in to {len(rhel8_beefy.config_groups)} configuration groups based on CPU count and Ram"
+        f"{mychannel.name} was divided in to {len(mychannel.config_groups)} configuration groups based on CPU count and Ram"
     )
-    for index, sub_list in enumerate(rhel8_beefy.config_groups):
+    for index, sub_list in enumerate(mychannel.config_groups):
         print(
-            f"\n================================ Group {index+1}/{len(rhel8_beefy.config_groups)} ================================"
+            f"\n================================ Group {index+1}/{len(mychannel.config_groups)} ================================"
         )
         for hosts in sub_list:
             print(
                 f"ID: {hosts.id} arches: {hosts.hw_dict['arches']} CPU(s): {hosts.hw_dict['CPU(s)']} Ram: {hosts.hw_dict['Ram']} Disk: {hosts.hw_dict['Disk']} Kernel: {hosts.hw_dict['Kernel']} O/S: {hosts.hw_dict['Operating System']}"
             )
 
-    if rhel8_beefy.is_valid():
-        exit(0)
+    if mychannel.is_valid():
+        return 0
 
-    exit(1)
+    return 1
