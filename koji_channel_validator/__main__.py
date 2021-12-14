@@ -1,5 +1,5 @@
 import argparse
-import channel_validator as cv
+import koji_channel_validator.channel_validator as cv
 
 
 def main():
