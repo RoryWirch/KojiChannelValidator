@@ -5,12 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Python: Specify channel",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["--log"]
+            "args": [
+                "--channel=rhel8-beefy",
+                "--log"
+            ],
+            "env": {"PYTHONPATH": "${workspaceRoot}"}
+        },
+        {
+            "name": "Python: log",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "--log"
+            ],
+            "env": {"PYTHONPATH": "${workspaceRoot}"}
         }
     ]
 }
