@@ -1,9 +1,15 @@
+# Koji Channel Validator Tool #
+
+### Contributers: Rory Wirch, Gabriella Roman, Jennifer Kim
+#TODO: add mentors?
+
 This tool queries [Koji](https://docs.pagure.org/koji/) and ensures that every builder host in a channel has the same CPU and memory resources. It scrapes Mock's [hw-info logs](https://rpm-software-management.github.io/mock/Plugin-HwInfo) for recent `buildArch` tasks.
 
 The purpose of this tool is to identify system resource drift across many Koji builders.
 
+## Installation
 
-## Installing on Linux
+### Linux
 Create a python virtual environments and then activate it:
 ```
 python3 -m venv venv
@@ -14,7 +20,7 @@ Install the dependencies in requirements.txt in the virtual environment:
 pip install -r requirements.txt
 ```
 
-## Installing on Mac
+### Mac
 Check your python3 version, and make sure it is up-to-date:
 ```
 python3 -V
@@ -37,9 +43,6 @@ This code requires the PGHOST environment variable to be set:
 ```
 export PGHOST=virtualdb.engineering.redhat.com
 ```
-
-## Files and what they do
-#TODO
 
 ## Testing
 Tests can be found in the tests directory. To run them, enable the virtual environment and run:
