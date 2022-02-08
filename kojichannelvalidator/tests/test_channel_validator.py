@@ -1,9 +1,9 @@
 import pytest
 import requests
 import yaml
-import koji_channel_validator.koji_channel_validator as cv
-from src.tests.util import FakeCall
-from src.tests.util import FakeResponse
+import kojichannelvalidator.koji_channel_validator as cv
+from kojichannelvalidator.tests.util import FakeCall
+from kojichannelvalidator.tests.util import FakeResponse
 
 
 @pytest.fixture
@@ -68,7 +68,7 @@ def test_channel_with_hosts():
     test_channel = cv.Channel(name="dummy-rhel8", id=21)
 
     # set up hosts for the channel. Host data is loaded from .yml
-    with open("src/tests/fixtures/hosts/hosts.yml", "r") as fp:
+    with open("kojichannelvalidator/tests/fixtures/hosts/hosts.yml", "r") as fp:
         host_yml = yaml.safe_load(fp)
 
         for hosts in host_yml:
