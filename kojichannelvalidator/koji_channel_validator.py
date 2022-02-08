@@ -3,9 +3,6 @@ import requests
 import koji
 import re
 import logging
-import argparse
-from datetime import datetime
-from pprint import pprint
 
 
 class Channel:
