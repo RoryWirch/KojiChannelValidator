@@ -1,10 +1,18 @@
 from setuptools import setup
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.rst").read_text()
+
+
 setup(
   name = 'KojiChannelValidator',
   packages = ['kojichannelvalidator'],
   version = '0.1',
   license='MIT',
   description = 'Identify system resource drift across many Koji builders',
+  long_description=long_description,
+  long_description_content_type='text/markdown',
   author = 'Rory Wirch',
   url = 'https://github.com/RoryWirch/KojiChannelValidator',
   install_requires=[
