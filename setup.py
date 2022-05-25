@@ -12,7 +12,7 @@ setup(
   license='MIT',
   description = 'Identify system resource drift across many Koji builders',
   long_description=long_description,
-  long_description_content_type='text/markdown',
+  long_description_content_type='text/x-rst',
   author = 'Rory Wirch',
   url = 'https://github.com/RoryWirch/KojiChannelValidator',
   install_requires=[
