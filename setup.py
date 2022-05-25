@@ -8,7 +8,7 @@ long_description = (this_directory / "README.rst").read_text()
 setup(
   name = 'KojiChannelValidator',
   packages = ['kojichannelvalidator'],
-  version = '0.1',
+  version = '0.1.1',
   license='MIT',
   description = 'Identify system resource drift across many Koji builders',
   long_description=long_description,
